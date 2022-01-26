@@ -1,6 +1,0 @@
-__pycache__
-.idea
-.pytest*
-.vscode
-venv
-*.log
