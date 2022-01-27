@@ -54,7 +54,7 @@ body {
     padding: 4px;
 }
 
-#elements {
+.elements {
     display: flex;
     flex-wrap: wrap;
 }
@@ -65,6 +65,6 @@ body {
     height: 140px;
 }
 
-.element>img {
+.element > img {
     margin-top: 40px;
 }
