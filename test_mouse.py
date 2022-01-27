@@ -107,13 +107,6 @@ def test_right_click_relative(web: WebBot):
     assert result['data'] == ['Right2']
 
 
-def test_right_click_at(web: WebBot):
-    web.right_click_at(170, 120)
-
-    result = get_event_result('element-result', web)
-    assert result['data'] == ['Right']
-
-
 def test_get_last_x(web: WebBot):  # erro at @only_if_element
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
@@ -153,10 +146,3 @@ def test_move_relative(web: WebBot):
 
     result = get_event_result('element-result', web)
     assert result['data'] == ['mouse-over2']
-
-
-def test_mouse_move(web: WebBot):
-    web.mouse_move(170, 120)
-
-    result = get_event_result('element-result', web)
-    assert result['data'] == ['mouse-over']
