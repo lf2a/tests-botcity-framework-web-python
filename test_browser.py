@@ -2,14 +2,16 @@ import json
 import os
 import pytest
 
+from typing import Dict
+from PIL import Image
 from botcity.web import WebBot, Browser, By
+from selenium.webdriver.common.keys import Keys
 
 project_path = os.path.abspath('')
 
 
 @pytest.fixture
 def web() -> WebBot:
-
     web = WebBot()
     web.headless = False
     web.browser = Browser.CHROME
@@ -17,6 +19,11 @@ def web() -> WebBot:
     yield web
 
     web.stop_browser()
+
+
+def get_event_result(id_event: str, web: WebBot) -> Dict:
+    event_result = web.find_element(id_event, By.ID)
+    return json.loads(event_result.text)
 
 
 def test_create_tab(web: WebBot):
@@ -86,3 +93,55 @@ def test_start_browser(web: WebBot):
     tabs = web.get_tabs()
 
     assert len(tabs) == 1
+
+
+def test_activate_tab(web: WebBot):
+    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.create_tab('https://www.google.com')
+    tabs = web.get_tabs()
+    web.activate_tab(tabs[0])
+
+    assert web.page_title() == 'Botcity - web test'
+
+
+def test_get_image_from_map(web: WebBot):
+    web.add_image('mouse', os.path.join(project_path, 'resources', 'mouse.png'))
+    img = web.get_image_from_map('mouse')
+
+    assert Image.isImageType(img)
+
+
+def test_get_js_dialog(web: WebBot):
+    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.type_keys([Keys.SHIFT, 'p'])
+
+    alert = web.get_js_dialog()
+    alert_text = alert.text
+    alert.accept()  # alert must be closed before stop browser
+
+    assert alert_text == 'Alert test'
+
+
+def test_handle_js_dialog(web: WebBot):
+    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.type_keys([Keys.SHIFT, 'l'])
+    web.handle_js_dialog(prompt_text='Test input text')
+
+    result = get_event_result('element-result', web)
+    assert result['data'] == ['Test input text']
+
+
+def test_get_screen_image(web: WebBot):
+    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    img = web.get_screen_image(region=(0, 0, 400, 200))
+
+    assert Image.isImageType(img)
+
+
+def test_get_screenshot(web: WebBot):
+    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    fp = os.path.join('resources', 'screenshot_test.png')
+    img = web.get_screenshot(fp)
+
+    assert Image.isImageType(img) and os.path.isfile(fp)
+    os.remove(fp)
