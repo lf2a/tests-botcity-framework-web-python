@@ -9,71 +9,98 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body>
-    <div id="info-bar">
-        <div class="info">[Mouse](X=<span id="mouse-x-pos">0</span>)(Y=<span id="mouse-y-pos">0</span>)</div>
-        <div class="info" style="width: 500px !important;">[Event](<span id="element-result"></span>)</div>
-        <div class="info" style="width: 500px !important;"><span id="botcity">Botcity</span></div>
+<body onload="showDisplaySize()">
+<div id="info-bar">
+    <div class="info" style="width: 300px !important;">
+        [Mouse](X=<span id="mouse-x-pos">0</span>)(Y=<span id="mouse-y-pos">0</span>)
     </div>
 
-    <div id="container">
-        <div class="card">
-            <div class="card-tag">Mouse test</div>
-            <div class="card-event-content">
-                <img src="icons/mouse-icon.png" id="mouse-trigger" alt="mouse icon" width="60px" height="60px">
-                <h1>Click type</h1>
-                <p id="mouse-status">Non clicked</p>
-                <img src="icons/mouse-icon.png" id="mouse-trigger2" alt="mouse icon" width="60px" height="60px">
-            </div>
-        </div>
+    <div class="info" style="width: 500px !important;">
+        [Event](<span id="element-result"></span>)
+    </div>
 
-        <div class="card">
-            <div class="card-tag">Keyboard test</div>
-            <div class="card-event-content">
-                <img src="icons/keyboard-icon.png" alt="mouse icon" width="60px" height="60px">
-                <h1>Key pressed</h1>
-                <p id="keyboard-status">Non key pressed</p>
-            </div>
-        </div>
+    <div class="info" style="width: 300px !important;">
+        [Screen](<span id="screen-size"></span>)
+    </div>
 
-        <div class="card">
-            <div class="card-tag">Find one test</div>
-            <div id="elements">
-                <div class="element">
-                    <img src="icons/mushroom1-icon.png" alt="mushroom1-icon" width="60px" height="60px" onclick="imageClick('img01')">
-                </div>
-                <div class="element">
-                    <img src="icons/mushroom2-icon.png" alt="mushroom1-icon" width="60px" height="60px" onclick="imageClick('img02')">
-                </div>
-                <div class="element">
-                    <img src="icons/mario1-icon.png" alt="mushroom1-icon" width="60px" height="60px" onclick="imageClick('img03')">
-                </div>
-                <div class="element">
-                    <img src="icons/mario2-icon.png" alt="mushroom1-icon" width="60px" height="60px" onclick="imageClick('img04')">
-                </div>
-            </div>
-        </div>
+    <div class="info" style="width: 300px !important;">
+        [Page](<span id="page-size"></span>)
+    </div>
 
-        <div class="card">
-            <div class="card-tag">Find multiple test</div>
-            <div id="elements">
-                <div class="element">
-                    <img src="icons/mario3-icon.png" alt="mushroom1-icon" width="60px" height="60px" onclick="imageClick('img05')">
-                </div>
-                <div class="element">
-                    <img src="icons/mario3-icon.png" alt="mushroom1-icon" width="60px" height="60px" onclick="imageClick('img06')">
-                </div>
-                <div class="element">
-                    <img src="icons/mario3-icon.png" alt="mushroom1-icon" width="60px" height="60px" onclick="imageClick('img07')">
-                </div>
-                <div class="element">
-                    <img src="icons/mario3-icon.png" alt="mushroom1-icon" width="60px" height="60px" onclick="imageClick('img08')">
-                </div>
-            </div>
+    <div class="info" style="width: 500px !important;">
+        [Test copy](<span id="botcity">Botcity</span>)
+    </div>
+</div>
+
+<div id="container">
+    <div class="card">
+        <div class="card-tag">Mouse test</div>
+        <div class="card-event-content">
+            <img src="icons/mouse-icon.png" id="mouse-trigger" alt="mouse icon" width="60px" height="60px">
+            <h1>Click type</h1>
+            <p id="mouse-status">Non clicked</p>
+            <img src="icons/mouse-icon.png" id="mouse-trigger2" alt="mouse icon" width="60px" height="60px">
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <div class="card">
+        <div class="card-tag">Keyboard test</div>
+        <div class="card-event-content">
+            <img src="icons/keyboard-icon.png" alt="mouse icon" width="60px" height="60px">
+            <h1>Key pressed</h1>
+            <p id="keyboard-status">Non key pressed</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-tag">Find one test</div>
+        <div class="elements">
+            <div class="element">
+                <img src="icons/mushroom1-icon.png" alt="mushroom1-icon" width="60px" height="60px"
+                     onclick="imageClick('img01')">
+            </div>
+            <div class="element">
+                <img src="icons/mushroom2-icon.png" alt="mushroom1-icon" width="60px" height="60px"
+                     onclick="imageClick('img02')">
+            </div>
+            <div class="element">
+                <img src="icons/mario1-icon.png" alt="mushroom1-icon" width="60px" height="60px"
+                     onclick="imageClick('img03')">
+            </div>
+            <div class="element">
+                <img src="icons/mario2-icon.png" alt="mushroom1-icon" width="60px" height="60px"
+                     onclick="imageClick('img04')">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-tag">Find multiple test</div>
+        <div class="elements">
+            <div class="element">
+                <img src="icons/mario3-icon.png" alt="mushroom1-icon" width="60px" height="60px"
+                     onclick="imageClick('img05')">
+            </div>
+            <div class="element">
+                <img src="icons/mario3-icon.png" alt="mushroom1-icon" width="60px" height="60px"
+                     onclick="imageClick('img06')">
+            </div>
+            <div class="element">
+                <img src="icons/mario3-icon.png" alt="mushroom1-icon" width="60px" height="60px"
+                     onclick="imageClick('img07')">
+            </div>
+            <div class="element">
+                <img src="icons/mario3-icon.png" alt="mushroom1-icon" width="60px" height="60px"
+                     onclick="imageClick('img08')">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/vision.js"></script>
+<script src="js/browser.js"></script>
+<script src="js/mouse.js"></script>
+<script src="js/keyboard.js"></script>
 </body>
 
 </html>
