@@ -5,16 +5,21 @@ import pytest
 
 from botcity.web import WebBot, Browser, By
 
+project_path = os.path.abspath('')
+
 
 @pytest.fixture
 def web() -> WebBot:
-    project_path = os.path.abspath('')
-
     web = WebBot()
-    web.headless = False
+    web.headless = True
     web.browser = Browser.CHROME
     web.driver_path = os.path.join(project_path, 'web-drivers', 'chromedriver.exe')
+    # web.driver_path = os.path.join(project_path, 'web-drivers', 'geckodriver.exe')
+    # web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver.exe')
+
     web.add_image('mouse', os.path.join(project_path, 'resources', 'mouse.png'))
+    web.add_image('git', os.path.join(project_path, 'resources', 'git.png'))
+
     web.browse(os.path.join(project_path, 'web', 'index.html'))
     yield web
 
@@ -107,7 +112,7 @@ def test_right_click_relative(web: WebBot):
     assert result['data'] == ['Right2']
 
 
-def test_get_last_x(web: WebBot):  # erro at @only_if_element
+def test_get_last_x(web: WebBot):
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.move()
@@ -146,3 +151,57 @@ def test_move_relative(web: WebBot):
 
     result = get_event_result('element-result', web)
     assert result['data'] == ['mouse-over2']
+
+
+def test_move_random(web: WebBot):
+    web.move_random(200, 200)
+
+    mouse_x = int(web.find_element('mouse-x-pos', By.ID).text)
+    mouse_y = int(web.find_element('mouse-y-pos', By.ID).text)
+    assert mouse_x <= 200 and mouse_y <= 200
+
+
+def test_mouse_down(web: WebBot):
+    if not web.find("git", matching=0.97, waiting_time=10000):
+        raise Exception('Image not found: git')
+    web.move()
+
+    web.mouse_down(wait_after=1000)
+
+    result = get_event_result('element-result', web)
+    assert result['data'] == ['Left-Hold']
+
+
+def test_mouse_up(web: WebBot):
+    if not web.find("git", matching=0.97, waiting_time=10000):
+        raise Exception('Image not found: git')
+    web.move()
+
+    web.mouse_down(wait_after=1000)
+    web.mouse_up(wait_after=1000)
+
+    result = get_event_result('element-result', web)
+    assert result['data'] == ['Left-Release']
+
+
+def test_click_on(web: WebBot):
+    web.click_on(label='mouse')
+
+    result = get_event_result('element-result', web)
+    assert result['data'] == ['Left']
+
+
+def test_get_element_coors(web: WebBot):
+    (x, y) = web.get_element_coords(label='mouse')
+    web.click_at(x, y)
+
+    result = get_event_result('element-result', web)
+    assert result['data'] == ['Left']
+
+
+def test_get_element_coors_centered(web: WebBot):
+    (x, y) = web.get_element_coords_centered(label='mouse')
+    web.click_at(x, y)
+
+    result = get_event_result('element-result', web)
+    assert result['data'] == ['Left']

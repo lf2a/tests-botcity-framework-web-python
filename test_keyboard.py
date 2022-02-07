@@ -5,15 +5,17 @@ import pytest
 
 from botcity.web import WebBot, Browser, By
 
+project_path = os.path.abspath('')
+
 
 @pytest.fixture
 def web() -> WebBot:
-    project_path = os.path.abspath('')
-
     web = WebBot()
     web.headless = False
     web.browser = Browser.CHROME
     web.driver_path = os.path.join(project_path, 'web-drivers', 'chromedriver.exe')
+    # web.driver_path = os.path.join(project_path, 'web-drivers', 'geckodriver.exe')
+    # web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver.exe')
     web.browse(os.path.join(project_path, 'web', 'index.html'))
     yield web
 
