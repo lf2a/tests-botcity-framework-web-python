@@ -26,4 +26,6 @@ function selectAll(id) {
 function showDisplaySize() {
     document.getElementById('screen-size').innerText = `${window.screen.width}x${window.screen.height}`;
     document.getElementById('page-size').innerText = `${window.innerWidth}x${window.innerHeight}`;
+    document.getElementById('window-size').innerText = `${window.outerWidth}x${window.outerHeight}`;
+    document.getElementById('is-maximized').innerText = screen.availWidth - window.innerWidth === 0;
 }
