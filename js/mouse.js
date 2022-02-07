@@ -1,11 +1,39 @@
-(function () {
-    let elementResult = {data: []};
+function mouseHoldAndReleaseEvent(event, mouseEvent, mouseStatusId) {
+    let clickType = '';
+    switch (event.button) {
+        case 0:
+            clickType = `Left${mouseEvent}`;
+            break;
+        case 1:
+            clickType = `Middle${mouseEvent}`;
+            break;
+        case 2:
+            clickType = `Right${mouseEvent}`;
+            break;
+    }
 
+    document.getElementById(mouseStatusId).innerText = clickType;
+
+    elementResult.data = [clickType]
+    document.getElementById('element-result').innerText = JSON.stringify(elementResult);
+    event.preventDefault();
+}
+
+(function () {
     // get mouse position
     document.addEventListener('mousemove', event => {
-        document.getElementById('mouse-x-pos').innerText = event.clientX;
-        document.getElementById('mouse-y-pos').innerText = event.clientY;
+        document.getElementById('mouse-x-pos').innerText = String(event.clientX);
+        document.getElementById('mouse-y-pos').innerText = String(event.clientY);
     });
+
+    const body = document.getElementById('mouse-trigger3');
+    body.addEventListener('mousedown', event =>
+        mouseHoldAndReleaseEvent(event, '-Hold', 'mouse-status2'));
+
+    body.addEventListener('mouseup', event =>
+        mouseHoldAndReleaseEvent(event, '-Release', 'mouse-status2'));
+
+    body.addEventListener('contextmenu', event => event.preventDefault())
 
     // select the element on which to handle mouse events
     const mouseTop = document.getElementById('mouse-trigger');
@@ -38,8 +66,6 @@
 
         elementResult.data.push(clickType)
         document.getElementById('element-result').innerText = JSON.stringify(elementResult);
-
-        event.preventDefault();
     });
 
     mouseTop.addEventListener('contextmenu', event => {
@@ -82,7 +108,5 @@
         event.preventDefault();
     });
 
-    mouseBottom.addEventListener('contextmenu', event => {
-        event.preventDefault();
-    });
+    mouseBottom.addEventListener('contextmenu', event => event.preventDefault());
 })();
