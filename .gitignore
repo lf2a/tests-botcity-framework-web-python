@@ -3,4 +3,5 @@ __pycache__
 .pytest*
 .vscode
 venv
+venv38
 *.log
