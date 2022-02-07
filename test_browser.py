@@ -13,10 +13,10 @@ project_path = os.path.abspath('')
 def web() -> WebBot:
     web = WebBot()
     web.headless = False
-    web.browser = Browser.CHROME
-    web.driver_path = os.path.join(project_path, 'web-drivers', 'chromedriver.exe')
+    web.browser = Browser.EDGE
+    # web.driver_path = os.path.join(project_path, 'web-drivers', 'chromedriver.exe')
     # web.driver_path = os.path.join(project_path, 'web-drivers', 'geckodriver.exe')
-    # web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver.exe')
+    web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver.exe')
     yield web
 
     web.stop_browser()
@@ -307,3 +307,11 @@ def test_set_current_element(web: WebBot):
 
     result = get_event_result('element-result', web)
     assert result['data'] == ['Left']
+
+
+def test_print_pdf(web: WebBot):
+    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    pdf = web.print_pdf(path=os.path.join(project_path, 'page.pdf'))
+
+    assert os.path.exists(pdf)
+    os.remove(pdf)

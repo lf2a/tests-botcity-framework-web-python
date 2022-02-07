@@ -69,7 +69,7 @@
 | `page_title()`                  | :heavy_check_mark: |          |
 | `page_up()`                     | :heavy_check_mark: |          |
 | `paste()`                       | :heavy_check_mark: |          |
-| `print_pdf()`                   |        :x:         | Fixing   |
+| `print_pdf()`                   | :heavy_check_mark: |          |
 | `release_shift()`               | :heavy_check_mark: |          |
 | `right_click()`                 | :heavy_check_mark: |          |
 | `right_click_at()`              | :heavy_check_mark: |          |
