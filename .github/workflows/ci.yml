@@ -34,7 +34,7 @@ jobs:
           sudo chmod 777 web-drivers/msedgedriver
 
       - name: Set up Chrome
-        uses: browser-actions/setup-chrome@99
+        uses: browser-actions/setup-chrome@latest
 
       - name: Run Chrome Tests
         run: pytest --browser=chrome --headless
