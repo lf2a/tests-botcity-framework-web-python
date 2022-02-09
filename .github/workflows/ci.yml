@@ -31,16 +31,16 @@ jobs:
         uses: browser-actions/setup-chrome@latest
 
       - name: Run Chrome Tests
-        run: pytest.exe --browser=chrome --headless
+        run: pytest --browser=chrome --headless
 
       - name: Set up Firefox
         uses: browser-actions/setup-firefox@latest
 
       - name: Run Firefox Tests
-        run: pytest.exe --browser=firefox --headless
+        run: pytest --browser=firefox --headless
 
       - name: Set up Edge
         uses: browser-actions/setup-edge@latest
 
       - name: Run Edge Tests
-        run: pytest.exe --browser=edge --headless
+        run: pytest --browser=edge --headless
