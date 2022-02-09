@@ -36,17 +36,22 @@ jobs:
       - name: Set up Chrome
         uses: browser-actions/setup-chrome@latest
 
-      - name: Run Chrome Tests # chrome 97.0.4692.99
-        run: pytest --browser=chrome --headless
+      - name: Print Chrome version
+        run: chrome --version
+
 
       - name: Set up Firefox
         uses: browser-actions/setup-firefox@latest
 
-      - name: Run Firefox Tests
-        run: pytest --browser=firefox --headless
+      - name: Print Firefox version
+        run: firefox --version
+
 
       - name: Set up Edge
         uses: browser-actions/setup-edge@latest
 
-      - name: Run Edge Tests
-        run: pytest --browser=edge --headless
+      - name: Print Edge version
+        run: (Get-Item (Get-Command msedge).Source).VersionInfo.ProductVersion
+
+      - name: Print root dir
+        run: python web.py
