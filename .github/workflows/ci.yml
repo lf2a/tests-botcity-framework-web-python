@@ -34,7 +34,9 @@ jobs:
           sudo chmod 777 web-drivers/msedgedriver
 
       - name: Set up Chrome
-        uses: browser-actions/setup-chrome@stable
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
 
       - name: Print Chrome version
         run: chrome --version
