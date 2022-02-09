@@ -34,14 +34,14 @@ jobs:
           sudo chmod 777 web-drivers/msedgedriver
 
       - name: Set up Chrome
-        uses: browser-actions/setup-chrome@latest
+        uses: browser-actions/setup-chrome@stable
 
       - name: Print Chrome version
         run: chrome --version
 
 
       - name: Set up Firefox
-        uses: browser-actions/setup-firefox@latest
+        uses: browser-actions/setup-firefox@stable
 
       - name: Print Firefox version
         run: firefox --version
@@ -55,3 +55,6 @@ jobs:
 
       - name: Print root dir
         run: python web.py
+
+      - name: Test
+        run: pytest test_browser.py::test_create_tab --browser=chrome
