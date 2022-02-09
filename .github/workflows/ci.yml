@@ -59,4 +59,4 @@ jobs:
         run: python web.py
 
       - name: Test
-        run: pytest test_browser.py::test_create_tab --browser=chrome
+        run: pytest test_browser.py::test_one --browser=chrome

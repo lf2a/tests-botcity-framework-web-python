@@ -6,6 +6,11 @@ from botcity.web import WebBot, Browser, By
 
 
 def test_create_tab(web: WebBot):
+    web.browse('https://google.com')
+    assert True
+
+
+def test_create_tab(web: WebBot):
     web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.create_tab('index.html')
 
