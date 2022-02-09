@@ -34,13 +34,13 @@ jobs:
           pip install .
 
       - name: Run Chrome Tests
-      - uses: browser-actions/setup-chrome@latest
+        uses: browser-actions/setup-chrome@latest
         run: pytest.exe --browser=chrome
 
       - name: Run Firefox Tests
-      - uses: browser-actions/setup-firefox@latest
+        uses: browser-actions/setup-firefox@latest
         run: pytest.exe --browser=firefox
 
       - name: Run Edge Tests
-      - uses: browser-actions/setup-edge@latest
+        uses: browser-actions/setup-edge@latest
         run: pytest.exe --browser=edge
