@@ -1,34 +1,12 @@
-import json
 import os
-import pytest
+import conftest
 
-from typing import Dict
 from PIL import Image
 from botcity.web import WebBot, Browser, By
 
-project_path = os.path.abspath('')
-
-
-@pytest.fixture
-def web() -> WebBot:
-    web = WebBot()
-    web.headless = False
-    web.browser = Browser.EDGE
-    # web.driver_path = os.path.join(project_path, 'web-drivers', 'chromedriver.exe')
-    # web.driver_path = os.path.join(project_path, 'web-drivers', 'geckodriver.exe')
-    web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver.exe')
-    yield web
-
-    web.stop_browser()
-
-
-def get_event_result(id_event: str, web: WebBot) -> Dict:
-    event_result = web.find_element(id_event, By.ID)
-    return json.loads(event_result.text)
-
 
 def test_create_tab(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.create_tab('index.html')
 
     title = web.page_title()
@@ -36,7 +14,7 @@ def test_create_tab(web: WebBot):
 
 
 def test_close_page(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.create_tab('test.html')
     web.wait(5_000)
     web.close_page()
@@ -46,7 +24,7 @@ def test_close_page(web: WebBot):
 
 
 def test_create_window(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.create_window(url='test.html')
     web.wait(2_000)
 
@@ -55,7 +33,7 @@ def test_create_window(web: WebBot):
 
 
 def test_display_size(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.set_screen_resolution(1280, 720)
     (w, h) = web.display_size()
 
@@ -63,7 +41,7 @@ def test_display_size(web: WebBot):
 
 
 def test_javascript(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.execute_javascript("""
         document.getElementById('element-result').innerText = 'execute_javascript() works!';
     """)
@@ -73,7 +51,7 @@ def test_javascript(web: WebBot):
 
 
 def test_get_tabs(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.create_tab('test.html')
     tabs = web.get_tabs()
 
@@ -81,8 +59,8 @@ def test_get_tabs(web: WebBot):
 
 
 def test_navigate_to(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
-    web.navigate_to(url=os.path.join(project_path, 'web', 'test.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.navigate_to(url=os.path.join(conftest.project_path, 'web', 'test.html'))
     web.wait(2_000)
 
     title = web.page_title()
@@ -97,7 +75,7 @@ def test_start_browser(web: WebBot):
 
 
 def test_activate_tab(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.create_tab('https://www.google.com')
     tabs = web.get_tabs()
     web.activate_tab(tabs[0])
@@ -106,14 +84,14 @@ def test_activate_tab(web: WebBot):
 
 
 def test_get_image_from_map(web: WebBot):
-    web.add_image('mouse', os.path.join(project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     img = web.get_image_from_map('mouse')
 
     assert Image.isImageType(img)
 
 
 def test_get_js_dialog(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.type_keys([web.KEYS.SHIFT, 'p'])
 
     alert = web.get_js_dialog()
@@ -124,23 +102,23 @@ def test_get_js_dialog(web: WebBot):
 
 
 def test_handle_js_dialog(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.type_keys([web.KEYS.SHIFT, 'l'])
     web.handle_js_dialog(prompt_text='Test input text')
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Test input text']
 
 
 def test_get_screen_image(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     img = web.get_screen_image(region=(0, 0, 400, 200))
 
     assert Image.isImageType(img)
 
 
 def test_get_screenshot(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     fp = os.path.join('resources', 'screenshot_test.png')
     img = web.get_screenshot(fp)
 
@@ -149,7 +127,7 @@ def test_get_screenshot(web: WebBot):
 
 
 def test_screen_cut(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     fp = os.path.join('resources', 'screen_cut_test.png')
     img = web.screen_cut(0, 0, 100, 200)
     img.save(fp)
@@ -159,21 +137,21 @@ def test_screen_cut(web: WebBot):
 
 
 def test_find_element(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     element = web.find_element('botcity', By.ID)
 
     assert element.text == 'Botcity'
 
 
 def test_find_elements(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     elements = web.find_elements('botcity', By.ID)
 
     assert [element.text for element in elements] == ['Botcity']
 
 
 def test_maximize_window(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.maximize_window()
 
     is_maximized = web.find_element('is-maximized', By.ID)
@@ -181,17 +159,17 @@ def test_maximize_window(web: WebBot):
 
 
 def test_page_source(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     page = web.page_source()
 
     assert page.title.text == 'Botcity - web test'
 
 
 def test_set_file_input_element(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     input_file_element = web.find_element('file', By.ID)
 
-    pdf_file = os.path.join(project_path, 'web', 'sample.pdf')
+    pdf_file = os.path.join(conftest.project_path, 'web', 'sample.pdf')
     web.set_file_input_element(input_file_element, pdf_file)
     web.wait(5_000)
 
@@ -200,7 +178,7 @@ def test_set_file_input_element(web: WebBot):
 
 
 def test_enter_iframe(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     iframe = web.find_element('pgtest', By.ID)
     web.enter_iframe(iframe)
 
@@ -209,7 +187,7 @@ def test_enter_iframe(web: WebBot):
 
 
 def test_leave_iframe(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     iframe = web.find_element('pgtest', By.ID)
     web.enter_iframe(iframe)
     web.leave_iframe()
@@ -219,7 +197,7 @@ def test_leave_iframe(web: WebBot):
 
 
 def test_get_view_port_size(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     size = web.get_viewport_size()
 
     element = web.find_element('window-size', By.ID).text.split('x')
@@ -227,8 +205,8 @@ def test_get_view_port_size(web: WebBot):
 
 
 def test_scroll_down(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
-    web.add_image('python', os.path.join(project_path, 'resources', 'python.png'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.add_image('python', os.path.join(conftest.project_path, 'resources', 'python.png'))
     web.scroll_down(20)
 
     python_icon = web.find("python", matching=0.97, waiting_time=10000)
@@ -236,8 +214,8 @@ def test_scroll_down(web: WebBot):
 
 
 def test_scroll_up(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
-    web.add_image('mouse', os.path.join(project_path, 'resources', 'mouse.png'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     web.type_keys([web.KEYS.SHIFT, 'd'])  # scroll down trigger
     web.scroll_up(20)
 
@@ -246,7 +224,7 @@ def test_scroll_up(web: WebBot):
 
 
 def test_set_screen_resolution(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.set_screen_resolution(1280, 720)
 
     page_size = web.find_element('page-size', By.ID).text
@@ -260,7 +238,7 @@ def test_set_screen_resolution(web: WebBot):
 
 
 def test_wait_for_downloads(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.wait(1000)
 
     web.type_keys([web.KEYS.SHIFT, 'q'])
@@ -268,21 +246,24 @@ def test_wait_for_downloads(web: WebBot):
 
     web.wait_for_downloads()
 
-    file = os.path.join(project_path, '10MB.bin')
-    file_part = os.path.join(project_path, 'fake.bin.part')  # if *.part exists download is not complete.
-    assert os.path.isfile(file) and not os.path.isfile(file_part)
+    file_name = '10MB.bin'
+    file = os.path.join(conftest.project_path, file_name)
+    # if *.part exists download is not complete.
+    file_part = os.path.join(conftest.project_path, file_name + '.part')
+
+    assert os.path.isfile(file) and not os.path.exists(file_part)
     os.remove(file)
 
 
 def test_wait_for_file(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.wait(1000)
 
     web.type_keys([web.KEYS.SHIFT, 'q'])
     web.wait(5000)
 
-    file = os.path.join(project_path, '10MB.bin')
-    file_part = os.path.join(project_path, '10MB.bin.part')  # if *.part exists download is not complete.
+    file = os.path.join(conftest.project_path, '10MB.bin')
+    file_part = os.path.join(conftest.project_path, '10MB.bin.part')  # if *.part exists download is not complete.
 
     assert web.wait_for_file(file) and os.path.isfile(file) and not os.path.exists(file_part)
     web.wait(2000)
@@ -290,11 +271,11 @@ def test_wait_for_file(web: WebBot):
 
 
 def test_set_current_element(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
     web.wait(1000)
 
-    web.add_image('mouse', os.path.join(project_path, 'resources', 'mouse.png'))
-    web.add_image('git', os.path.join(project_path, 'resources', 'git.png'))
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('git', os.path.join(conftest.project_path, 'resources', 'git.png'))
 
     mouse_element = web.find("mouse", matching=0.97, waiting_time=10_000)
 
@@ -305,13 +286,13 @@ def test_set_current_element(web: WebBot):
     web.set_current_element(mouse_element)
     web.click(wait_after=2000)
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left']
 
 
 def test_print_pdf(web: WebBot):
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
-    pdf = web.print_pdf(path=os.path.join(project_path, 'page.pdf'))
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+    pdf = web.print_pdf(path=os.path.join(conftest.project_path, 'page.pdf'))
 
     assert os.path.exists(pdf)
     os.remove(pdf)

@@ -1,118 +1,121 @@
-import json
 import os
-from typing import Dict
-import pytest
+import conftest
 
-from botcity.web import WebBot, Browser, By
-
-project_path = os.path.abspath('')
-
-
-@pytest.fixture
-def web() -> WebBot:
-    web = WebBot()
-    web.headless = True
-    web.browser = Browser.CHROME
-    web.driver_path = os.path.join(project_path, 'web-drivers', 'chromedriver.exe')
-    # web.driver_path = os.path.join(project_path, 'web-drivers', 'geckodriver.exe')
-    # web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver.exe')
-
-    web.add_image('mouse', os.path.join(project_path, 'resources', 'mouse.png'))
-    web.add_image('git', os.path.join(project_path, 'resources', 'git.png'))
-
-    web.browse(os.path.join(project_path, 'web', 'index.html'))
-    yield web
-
-    web.stop_browser()
-
-
-def get_event_result(id_event: str, web: WebBot) -> Dict:
-    event_result = web.find_element(id_event, By.ID)
-    return json.loads(event_result.text)
+from botcity.web import WebBot, By
 
 
 def test_left_click(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.click()
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left']
 
 
 def test_left_double_click(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.double_click()
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left', 'Left']
 
 
 def test_left_triple_click(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.triple_click()
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left', 'Left', 'Left']
 
 
 def test_triple_click_reltive(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.triple_click_relative(16, 140)
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left2', 'Left2', 'Left2']
 
 
 def test_right_click(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.right_click()
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Right']
 
 
 def test_right_double_click(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.right_click(clicks=2)
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Right', 'Right']
 
 
 def test_left_click_relative(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.click_relative(16, 140)
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left2']
 
 
 def test_left_double_click_relative(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.double_click_relative(16, 140)
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left2', 'Left2']
 
 
 def test_right_click_relative(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.right_click_relative(16, 140)
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Right2']
 
 
 def test_get_last_x(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.move()
@@ -124,6 +127,9 @@ def test_get_last_x(web: WebBot):
 
 
 def test_get_last_y(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.move()
@@ -135,25 +141,34 @@ def test_get_last_y(web: WebBot):
 
 
 def test_move_mouse(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.move()
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['mouse-over']
 
 
 def test_move_relative(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.move()  # posicionando o mouse
     web.move_relative(16, 140)
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['mouse-over2']
 
 
 def test_move_random(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     web.move_random(200, 200)
 
     mouse_x = int(web.find_element('mouse-x-pos', By.ID).text)
@@ -162,17 +177,23 @@ def test_move_random(web: WebBot):
 
 
 def test_mouse_down(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('git', os.path.join(conftest.project_path, 'resources', 'git.png'))
     if not web.find("git", matching=0.97, waiting_time=10000):
         raise Exception('Image not found: git')
     web.move()
 
     web.mouse_down(wait_after=1000)
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left-Hold']
 
 
 def test_mouse_up(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('git', os.path.join(conftest.project_path, 'resources', 'git.png'))
     if not web.find("git", matching=0.97, waiting_time=10000):
         raise Exception('Image not found: git')
     web.move()
@@ -180,28 +201,37 @@ def test_mouse_up(web: WebBot):
     web.mouse_down(wait_after=1000)
     web.mouse_up(wait_after=1000)
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left-Release']
 
 
 def test_click_on(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     web.click_on(label='mouse')
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left']
 
 
 def test_get_element_coors(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     (x, y) = web.get_element_coords(label='mouse')
     web.click_at(x, y)
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left']
 
 
 def test_get_element_coors_centered(web: WebBot):
+    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+
+    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
     (x, y) = web.get_element_coords_centered(label='mouse')
     web.click_at(x, y)
 
-    result = get_event_result('element-result', web)
+    result = conftest.get_event_result('element-result', web)
     assert result['data'] == ['Left']
