@@ -36,7 +36,7 @@ jobs:
       - name: Set up Chrome
         uses: browser-actions/setup-chrome@latest
 
-      - name: Run Chrome Tests
+      - name: Run Chrome Tests # chrome 97.0.4692.99
         run: pytest --browser=chrome --headless
 
       - name: Set up Firefox
