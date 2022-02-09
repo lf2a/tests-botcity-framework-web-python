@@ -27,14 +27,20 @@ jobs:
       - name: Install Test Dependencies
         run: pip install -r requirements.txt
 
-      - name: Run Chrome Tests
+      - name: Set up Chrome
         uses: browser-actions/setup-chrome@latest
+
+      - name: Run Chrome Tests
         run: pytest.exe --browser=chrome --headless
 
-      - name: Run Firefox Tests
+      - name: Set up Firefox
         uses: browser-actions/setup-firefox@latest
+
+      - name: Run Firefox Tests
         run: pytest.exe --browser=firefox --headless
 
-      - name: Run Edge Tests
+      - name: Set up Edge
         uses: browser-actions/setup-edge@latest
+
+      - name: Run Edge Tests
         run: pytest.exe --browser=edge --headless
