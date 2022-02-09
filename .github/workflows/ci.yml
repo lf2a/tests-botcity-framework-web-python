@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ 3.8 ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Test Dependencies
+        run: |
+          pip install -r test-requirements.txt
+
+      - name: Install Package
+        run: |
+          pip install .
+
+      - name: Run Chrome Tests
+      - uses: browser-actions/setup-chrome@latest
+        run: pytest.exe --browser=chrome
+
+      - name: Run Firefox Tests
+      - uses: browser-actions/setup-firefox@latest
+        run: pytest.exe --browser=firefox
+
+      - name: Run Edge Tests
+      - uses: browser-actions/setup-edge@latest
+        run: pytest.exe --browser=edge
