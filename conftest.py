@@ -19,10 +19,8 @@ def web(request):
     if web.browser == 'edge':
         if platform.system() == 'Linux':
             opt = edge.default_options()
-            opt.add_argument('--disable-dev-shm-usage')
-            opt.add_argument('--no-sandbox')
             opt.set_capability('platform', 'LINUX')  # WINDOWS is default value:
-            opt.binary_location = '/usr/bin/microsoft-edge-stable'
+            opt.binary_location = '/opt/microsoft/msedge/msedge'
             web.options = opt
 
         web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver')
