@@ -50,11 +50,6 @@ jobs:
           sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
           sudo apt update
           sudo apt install microsoft-edge-stable
-#          curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-#          sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
-#          sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
-#          sudo rm microsoft.gpg
-#          sudo apt update && sudo apt install microsoft-edge-stable
 
       - name: Print Edge version
         run: |
@@ -67,17 +62,26 @@ jobs:
 #      - name: Print Edge version
 #        run: (Get-Item (Get-Command msedge).Source).VersionInfo.ProductVersion
 
-      - name: Run web.py
-        run: python web.py
+      - name: CHROME - Test Browser
+        run: pytest test_browser.py --browser=chrome --headless
 
-#      - name: Test Browser
-#        run: pytest test_browser.py --browser=firefox --headless
-#
-#      - name: Test Keyboard
-#        run: pytest test_keyboard.py --browser=chrome --headless
-#
-#      - name: Test Mouse
-#        run: pytest test_mouse.py --browser=chrome --headless
-#
-#      - name: Test Vision
-#        run: pytest test_vision.py --browser=chrome --headless
+      - name: CHROME - Test Keyboard
+        run: pytest test_keyboard.py --browser=chrome --headless
+
+      - name: CHROME - Test Mouse
+        run: pytest test_mouse.py --browser=chrome --headless
+
+      - name: CHROME - Test Vision
+        run: pytest test_vision.py --browser=chrome --headless
+
+      - name: FIREFOX - Test Browser
+        run: pytest test_browser.py --browser=firefox --headless
+
+      - name: FIREFOX - Test Keyboard
+        run: pytest test_keyboard.py --browser=firefox --headless
+
+      - name: FIREFOX - Test Mouse
+        run: pytest test_mouse.py --browser=firefox --headless
+
+      - name: FIREFOX - Test Vision
+        run: pytest test_vision.py --browser=firefox --headless
