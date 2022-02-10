@@ -6,12 +6,11 @@ from botcity.web import WebBot, Browser, By
 
 
 def test_create_tab(web: WebBot):
-    web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
     web.create_tab('index.html')
 
     title = web.page_title()
     assert title == 'Botcity - web test'
-
 
 # def test_close_page(web: WebBot):
 #     web.browse(os.path.join(conftest.project_path, 'web', 'index.html'))

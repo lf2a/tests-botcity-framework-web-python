@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ windows-latest ]
+        os: [ ubuntu-latest ]
         python-version: [ 3.8 ]
 
     steps:
@@ -27,26 +27,26 @@ jobs:
       - name: Install Test Dependencies
         run: pip install -r requirements.txt
 
-#      - name: Changing permissions [linux]
-#        run: |
-#          sudo chmod 777 web-drivers/chromedriver
-#          sudo chmod 777 web-drivers/geckodriver
-#          sudo chmod 777 web-drivers/msedgedriver
+      - name: Changing permissions [linux]
+        run: |
+          sudo chmod 777 web-drivers/chromedriver
+          sudo chmod 777 web-drivers/geckodriver
+          sudo chmod 777 web-drivers/msedgedriver
 
       - name: Set up Chrome
         uses: browser-actions/setup-chrome@latest
         with:
           chrome-version: stable
 
-#      - name: Print Chrome version
-#        run: chrome --version
+      - name: Print Chrome version
+        run: chrome --version
 
 
       - name: Set up Firefox
         uses: browser-actions/setup-firefox@latest
 
-#      - name: Print Firefox version
-#        run: firefox --version
+      - name: Print Firefox version
+        run: firefox --version
 
 
 #      - name: Set up Edge
@@ -59,4 +59,4 @@ jobs:
         run: python web.py
 
       - name: Test
-        run: pytest.exe test_browser.py --browser=chrome --headless
+        run: pytest test_browser.py --browser=chrome --headless
