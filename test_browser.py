@@ -7,10 +7,10 @@ from botcity.web import WebBot, Browser, By
 
 def test_create_tab(web: WebBot):
     web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
-    web.create_tab('index.html')
+    web.create_tab('https://github.com/botcity-dev/botcity-framework-web-python')
 
     title = web.page_title()
-    assert title == 'Botcity - web test'
+    assert title == 'botcity-framework-web-python: BotCity Framework Web'
 
 
 def test_close_page(web: WebBot):
