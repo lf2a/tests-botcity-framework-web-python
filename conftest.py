@@ -23,7 +23,7 @@ def web(request):
             opt.binary_location = '/opt/microsoft/msedge/msedge'
             web.options = opt
 
-        web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedrivera')
+        web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver')
     elif web.browser == 'firefox':
         web.driver_path = os.path.join(project_path, 'web-drivers', 'geckodriver')
     else:
