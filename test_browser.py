@@ -5,7 +5,7 @@ from PIL import Image
 from botcity.web import WebBot, Browser, By
 
 
-def test_create_tab(web: WebBot):
+def test_one(web: WebBot):
     web.browse('https://google.com')
     assert True
 
