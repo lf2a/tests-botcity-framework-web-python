@@ -1,9 +1,11 @@
 import os
 import json
 import pytest
+import platform
 
 from typing import Dict
 from botcity.web import WebBot, Browser, By
+from botcity.web.browsers import edge
 
 project_path = os.path.abspath('')
 
@@ -12,9 +14,14 @@ project_path = os.path.abspath('')
 def web(request):
     web = WebBot()
     web.headless = request.config.getoption("--headless")
-
     web.browser = request.config.getoption("--browser") or Browser.CHROME
+
     if web.browser == 'edge':
+        if platform.system() == 'Linux':
+            opt = edge.default_options()
+            opt.set_capability('platform', 'LINUX')  # WINDOWS is default value:
+            web.options = opt
+
         web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver')
     elif web.browser == 'firefox':
         web.driver_path = os.path.join(project_path, 'web-drivers', 'geckodriver')
