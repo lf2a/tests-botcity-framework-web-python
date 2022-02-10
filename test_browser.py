@@ -10,7 +10,7 @@ def test_create_tab(web: WebBot):
     web.create_tab('https://github.com/botcity-dev/botcity-framework-web-python')
 
     title = web.page_title()
-    assert title == 'botcity-framework-web-python: BotCity Framework Web'
+    assert 'botcity-framework-web-python: BotCity Framework Web' in title
 
 
 def test_close_page(web: WebBot):
