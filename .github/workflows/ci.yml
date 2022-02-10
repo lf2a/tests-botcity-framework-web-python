@@ -27,6 +27,9 @@ jobs:
       - name: Install Test Dependencies
         run: pip install -r requirements.txt
 
+      - name: Install MSEdge Tools 3.141.3
+        run: pip install msedge-selenium-tools==3.141.3
+
       - name: Changing permissions [linux]
         run: |
           sudo chmod 777 web-drivers/chromedriver
