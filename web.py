@@ -1,6 +1,7 @@
 import os
 
 from botcity.web import WebBot, Browser, browsers
+from  selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 print(os.path.abspath(''))
 print(os.path.exists(os.path.join(os.path.abspath(''), 'web-drivers', 'msedgedriver')))
@@ -17,6 +18,10 @@ opt.add_argument('--disable-dev-shm-usage')
 opt.set_capability('platform', 'LINUX')  # WINDOWS is default value:
 opt.binary_location = '/usr/bin/microsoft-edge-stable'
 web.options = opt
+
+cap = DesiredCapabilities.EDGE.copy()
+cap['platform'] = 'LINUX'
+web.capabilities = cap
 
 web.browse('https://google.com')
 web.wait(5_000)
