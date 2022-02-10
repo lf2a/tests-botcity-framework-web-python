@@ -60,7 +60,7 @@ def test_get_tabs(web: WebBot):
 
 def test_navigate_to(web: WebBot):
     web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
-    web.navigate_to(url=os.path.join(conftest.project_path, 'web', 'test.html'))
+    web.navigate_to(url='file://' + os.path.join(conftest.project_path, 'web', 'test.html'))
     web.wait(2_000)
 
     title = web.page_title()
@@ -174,7 +174,7 @@ def test_set_file_input_element(web: WebBot):
     web.wait(5_000)
 
     file_name = os.path.basename(input_file_element.get_attribute('value'))
-    assert file_name == 'sample.pdf'
+    assert file_name == 'C:\\fakepath\\sample.pdf'
 
 
 def test_enter_iframe(web: WebBot):
