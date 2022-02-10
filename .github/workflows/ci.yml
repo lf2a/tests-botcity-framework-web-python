@@ -59,4 +59,4 @@ jobs:
         run: python web.py
 
       - name: Test
-        run: pytest test_browser.py::test_one --browser=chrome --headless
+        run: pytest test_browser.py --browser=chrome --headless
