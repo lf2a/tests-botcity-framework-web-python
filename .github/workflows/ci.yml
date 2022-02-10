@@ -16,9 +16,12 @@ jobs:
       matrix:
         os: [ ubuntu-latest ] # windows-latest, macos-latest
         python-version: [ 3.8 ]
+        browser: [ firefox, chrome ] # edge
 
     steps:
       - uses: actions/checkout@v2
+
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -28,63 +31,49 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Install MSEdge Tools 3.141.3
+        if: matrix.browser == 'edge'
         run: pip install msedge-selenium-tools==3.141.3
 
       - name: Changing permissions [linux]
+        if: matrix.os == 'ubuntu-latest'
         run: |
           sudo chmod 755 web-drivers/chromedriver
           sudo chmod 755 web-drivers/geckodriver
           sudo chmod 755 web-drivers/msedgedriver
 
       - name: Set up Chrome
+        if: matrix.browser == 'chrome'
         uses: browser-actions/setup-chrome@latest
         with:
           chrome-version: stable
 
       - name: Set up Firefox
+        if: matrix.browser == 'firefox'
         uses: browser-actions/setup-firefox@latest
 
-      - name: Install Edge
+      - name: Set up Edge # works only ubuntu
+        if: matrix.os == 'ubuntu-latest && matrix.browser == 'edge'
         run: |
           sudo apt install wget software-properties-common apt-transport-https
           sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
           sudo apt update
           sudo apt install microsoft-edge-stable
 
-      - name: Print Edge version
-        run: |
-          microsoft-edge-stable --version
-          which microsoft-edge-stable
-
-#      - name: Set up Edge # only windows
-#        uses: browser-actions/setup-edge@latest
-
-#      - name: Print Edge version # only windows
-#        run: (Get-Item (Get-Command msedge).Source).VersionInfo.ProductVersion
+      - name: Set up Edge # works only windows
+        if: matrix.os == 'windows-latest' && matrix.browser == 'edge'
+        uses: browser-actions/setup-edge@latest
 
       - name: Test web.py
         run: python web.py
 
-#      - name: CHROME - Test Browser
-#        run: pytest test_browser.py --browser=chrome --headless
-#
-#      - name: CHROME - Test Keyboard
-#        run: pytest test_keyboard.py --browser=chrome --headless
-#
-#      - name: CHROME - Test Mouse
-#        run: pytest test_mouse.py --browser=chrome --headless
-#
-#      - name: CHROME - Test Vision
-#        run: pytest test_vision.py --browser=chrome --headless
-#
-#      - name: FIREFOX - Test Browser
-#        run: pytest test_browser.py --browser=firefox --headless
-#
-#      - name: FIREFOX - Test Keyboard
-#        run: pytest test_keyboard.py --browser=firefox --headless
-#
-#      - name: FIREFOX - Test Mouse
-#        run: pytest test_mouse.py --browser=firefox --headless
-#
-#      - name: FIREFOX - Test Vision
-#        run: pytest test_vision.py --browser=firefox --headless
+      - name: Test Browser actions
+        run: pytest test_browser.py --browser=${{ matrix.browser }} --headless
+
+      - name: Test Keyboard
+        run: pytest test_keyboard.py --browser=${{ matrix.browser }} --headless
+
+      - name: Test Mouse
+        run: pytest test_mouse.py --browser=${{ matrix.browser }} --headless
+
+      - name: Test Vision
+        run: pytest test_vision.py --browser=${{ matrix.browser }} --headless
