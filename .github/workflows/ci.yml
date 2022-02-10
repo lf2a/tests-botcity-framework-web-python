@@ -68,9 +68,6 @@ jobs:
         if: matrix.os == 'windows-latest' && matrix.browser == 'edge'
         uses: browser-actions/setup-edge@latest
 
-      - name: Test web.py
-        run: python web.py
-
       - name: Test Browser actions
         if: matrix.browser != 'edge'
         run: pytest test_browser.py --browser=${{ matrix.browser }} --headless
