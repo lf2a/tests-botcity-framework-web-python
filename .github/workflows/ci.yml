@@ -71,11 +71,11 @@ jobs:
       - name: Test Browser
         run: pytest test_browser.py --browser=firefox --headless
 
-#      - name: Test Keyboard
-#        run: pytest test_keyboard.py --browser=chrome --headless
-#
-#      - name: Test Mouse
-#        run: pytest test_mouse.py --browser=chrome --headless
-#
-#      - name: Test Vision
-#        run: pytest test_vision.py --browser=chrome --headless
+      - name: Test Keyboard
+        run: pytest test_keyboard.py --browser=chrome --headless
+
+      - name: Test Mouse
+        run: pytest test_mouse.py --browser=chrome --headless
+
+      - name: Test Vision
+        run: pytest test_vision.py --browser=chrome --headless
