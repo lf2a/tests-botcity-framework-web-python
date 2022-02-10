@@ -14,9 +14,9 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest ] # windows-latest, macos-latest
+        os: [ ubuntu-latest, windows-latest ]
         python-version: [ 3.8 ]
-        browser: [ firefox, chrome ] # edge
+        browser: [ firefox, chrome, edge ]
 
     steps:
       - uses: actions/checkout@v2
@@ -34,12 +34,17 @@ jobs:
         if: matrix.browser == 'edge'
         run: pip install msedge-selenium-tools==3.141.3
 
-      - name: Changing permissions [linux]
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo chmod 755 web-drivers/chromedriver
-          sudo chmod 755 web-drivers/geckodriver
-          sudo chmod 755 web-drivers/msedgedriver
+      - name: Changing permissions
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
+        run: sudo chmod 755 web-drivers/chromedriver
+
+      - name: Changing permissions
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
+        run: sudo chmod 755 web-drivers/geckodriver
+
+      - name: Changing permissions
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'edge'
+        run: sudo chmod 755 web-drivers/msedgedriver
 
       - name: Set up Chrome
         if: matrix.browser == 'chrome'
@@ -67,13 +72,17 @@ jobs:
         run: python web.py
 
       - name: Test Browser actions
+        if: matrix.browser != 'edge'
         run: pytest test_browser.py --browser=${{ matrix.browser }} --headless
 
       - name: Test Keyboard
+        if: matrix.browser != 'edge'
         run: pytest test_keyboard.py --browser=${{ matrix.browser }} --headless
 
       - name: Test Mouse
+        if: matrix.browser != 'edge'
         run: pytest test_mouse.py --browser=${{ matrix.browser }} --headless
 
       - name: Test Vision
+        if: matrix.browser != 'edge'
         run: pytest test_vision.py --browser=${{ matrix.browser }} --headless
