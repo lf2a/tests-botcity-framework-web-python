@@ -21,7 +21,7 @@ def web(request):
             opt = edge.default_options()
             opt.add_argument('--remote-debugging-port=9222')
             opt.set_capability('platform', 'LINUX')  # WINDOWS is default value:
-            opt.binary_location = '/usr/bin/microsoft-edge-stable'
+            # opt.binary_location = '/usr/bin/microsoft-edge-stable'
             web.options = opt
 
         web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver')
