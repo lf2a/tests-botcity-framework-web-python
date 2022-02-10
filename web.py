@@ -15,6 +15,7 @@ opt.add_argument('--remote-debugging-port=9222')
 opt.add_argument('--no-sandbox')
 opt.add_argument('--disable-dev-shm-usage')
 opt.set_capability('platform', 'LINUX')  # WINDOWS is default value:
+opt.binary_location = '/usr/bin/microsoft-edge-stable'
 web.options = opt
 
 web.browse('https://google.com')
