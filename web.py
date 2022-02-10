@@ -6,7 +6,7 @@ print(os.path.abspath(''))
 print(os.path.exists(os.path.join(os.path.abspath(''), 'web-drivers', 'msedgedriver')))
 
 web = WebBot()
-web.headless = False
+web.headless = True
 web.browser = Browser.EDGE
 web.driver_path = os.path.join(os.path.abspath(''), 'web-drivers', 'msedgedriver')
 
