@@ -32,9 +32,6 @@ jobs:
         uses: crazy-max/ghaction-chocolatey@v1.6.0
         with:
           args: -h
-#        run: |
-#          "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
-#          choco upgrade chocolatey
 
       - name: Install Test Dependencies
         run: pip install -r requirements.txt
@@ -56,13 +53,13 @@ jobs:
         run: sudo chmod 755 web-drivers/msedgedriver
 
       - name: Set up Chrome Ubuntu
-        if: matrix.browser == 'chrome'
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
         uses: browser-actions/setup-chrome@latest
         with:
           chrome-version: stable
 
       - name: Set up Chrome Windows
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
         run: choco install googlechrome
 
       - name: Set up Firefox Ubuntu
@@ -70,7 +67,7 @@ jobs:
         uses: browser-actions/setup-firefox@latest
 
       - name: Set up Firefox Windows
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-latest' && matrix.browser == 'firefox'
         run: choco install firefox
 
       - name: Set up Edge # works only ubuntu
