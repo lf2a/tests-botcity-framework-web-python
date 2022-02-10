@@ -69,7 +69,7 @@ jobs:
         run: python web.py
 
       - name: Test Browser
-        run: pytest test_browser.py --browser=edge --headless
+        run: pytest test_browser.py --browser=firefox --headless
 
       - name: Test Keyboard
         run: pytest test_keyboard.py --browser=chrome --headless
