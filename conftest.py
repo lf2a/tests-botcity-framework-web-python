@@ -20,6 +20,7 @@ def web(request):
         if platform.system() == 'Linux':
             opt = edge.default_options()
             opt.set_capability('platform', 'LINUX')  # WINDOWS is default value:
+            opt.binary_location = '/usr/bin/microsoft-edge-stable'
             web.options = opt
 
         web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver')

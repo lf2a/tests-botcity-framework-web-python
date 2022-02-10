@@ -38,15 +38,8 @@ jobs:
         with:
           chrome-version: stable
 
-      - name: Print Chrome version
-        run: chrome --version
-
-
       - name: Set up Firefox
         uses: browser-actions/setup-firefox@latest
-
-      - name: Print Firefox version
-        run: firefox --version
 
       - name: Install Edge
         run: |
