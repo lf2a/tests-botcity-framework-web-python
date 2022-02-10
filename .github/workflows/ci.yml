@@ -32,9 +32,9 @@ jobs:
 
       - name: Changing permissions [linux]
         run: |
-          sudo chmod 777 web-drivers/chromedriver
-          sudo chmod 777 web-drivers/geckodriver
-          sudo chmod 777 web-drivers/msedgedriver
+          sudo chmod 755 web-drivers/chromedriver
+          sudo chmod 755 web-drivers/geckodriver
+          sudo chmod 755 web-drivers/msedgedriver
 
       - name: Set up Chrome
         uses: browser-actions/setup-chrome@latest

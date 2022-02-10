@@ -1,7 +1,7 @@
 import os
 
 from botcity.web import WebBot, Browser, browsers
-from  selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver import DesiredCapabilities
 
 print(os.path.abspath(''))
 print(os.path.exists(os.path.join(os.path.abspath(''), 'web-drivers', 'msedgedriver')))
@@ -13,15 +13,15 @@ web.driver_path = os.path.join(os.path.abspath(''), 'web-drivers', 'msedgedriver
 
 opt = browsers.edge.default_options()
 opt.add_argument('--remote-debugging-port=9222')
-opt.add_argument('--no-sandbox')
-opt.add_argument('--disable-dev-shm-usage')
+# opt.add_argument('--no-sandbox')
+# opt.add_argument('--disable-dev-shm-usage')
 opt.set_capability('platform', 'LINUX')  # WINDOWS is default value:
 opt.binary_location = '/usr/bin/microsoft-edge-stable'
 web.options = opt
 
-cap = DesiredCapabilities.EDGE.copy()
-cap['platform'] = 'LINUX'
-web.capabilities = cap
+# cap = DesiredCapabilities.EDGE.copy()
+# cap['platform'] = 'LINUX'
+# web.capabilities = cap
 
 web.browse('https://google.com')
 web.wait(5_000)
