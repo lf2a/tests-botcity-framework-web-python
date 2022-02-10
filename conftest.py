@@ -15,11 +15,11 @@ def web(request):
 
     web.browser = request.config.getoption("--browser") or Browser.CHROME
     if web.browser == 'edge':
-        web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver')
+        web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver.exe')
     elif web.browser == 'firefox':
-        web.driver_path = os.path.join(project_path, 'web-drivers', 'geckodriver')
+        web.driver_path = os.path.join(project_path, 'web-drivers', 'geckodriver.exe')
     else:
-        web.driver_path = os.path.join(project_path, 'web-drivers', 'chromedriver')
+        web.driver_path = os.path.join(project_path, 'web-drivers', 'chromedriver.exe')
     yield web
 
     web.stop_browser()
