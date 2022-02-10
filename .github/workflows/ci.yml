@@ -57,7 +57,9 @@ jobs:
 #          sudo apt update && sudo apt install microsoft-edge-stable
 
       - name: Print Edge version
-        run: microsoft-edge-stable --version
+        run: |
+        microsoft-edge-stable --version
+        which microsoft-edge-stable
 
 #      - name: Set up Edge
 #        uses: browser-actions/setup-edge@latest
