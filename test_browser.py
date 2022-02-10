@@ -6,8 +6,9 @@ from botcity.web import WebBot, Browser, By
 
 
 def test_create_tab(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.start_browser()
     web.create_tab('https://github.com/botcity-dev/botcity-framework-web-python')
+    web.wait(2_000)
 
     title = web.page_title()
     assert 'botcity-framework-web-python: BotCity Framework Web' in title
