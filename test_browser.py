@@ -173,8 +173,8 @@ def test_set_file_input_element(web: WebBot):
     web.set_file_input_element(input_file_element, pdf_file)
     web.wait(5_000)
 
-    file_name = os.path.basename(input_file_element.get_attribute('value'))
-    assert file_name == 'sample.pdf'
+    file_name = input_file_element.get_attribute('value')
+    assert file_name == 'C:\\fakepath\\sample.pdf'
 
 
 def test_enter_iframe(web: WebBot):
