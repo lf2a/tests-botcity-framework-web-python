@@ -17,6 +17,7 @@ opt.add_argument('--remote-debugging-port=9222')
 # opt.add_argument('--disable-dev-shm-usage')
 opt.set_capability('platform', 'LINUX')  # WINDOWS is default value:
 opt.binary_location = '/usr/bin/microsoft-edge-stable'
+opt.use_chromium = True
 web.options = opt
 
 # cap = DesiredCapabilities.EDGE.copy()
