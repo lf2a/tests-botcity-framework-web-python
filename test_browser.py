@@ -6,8 +6,7 @@ from botcity.web import WebBot, Browser, By
 
 
 def test_create_tab(web: WebBot):
-    web.start_browser()
-    web.create_tab('https://github.com/botcity-dev/botcity-framework-web-python')
+    web.browse('https://github.com/botcity-dev/botcity-framework-web-python')
     web.wait(2_000)
 
     title = web.page_title()
