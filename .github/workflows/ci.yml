@@ -27,6 +27,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Set up Chocolatey
+        if: matrix.os == 'windows-latest'
+        run: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+        choco upgrade chocolatey
+
       - name: Install Test Dependencies
         run: pip install -r requirements.txt
 
@@ -46,15 +52,23 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && matrix.browser == 'edge'
         run: sudo chmod 755 web-drivers/msedgedriver
 
-      - name: Set up Chrome
+      - name: Set up Chrome Ubuntu
         if: matrix.browser == 'chrome'
         uses: browser-actions/setup-chrome@latest
         with:
           chrome-version: stable
 
-      - name: Set up Firefox
-        if: matrix.browser == 'firefox'
+      - name: Set up Chrome Windows
+        if: matrix.os == 'windows-latest'
+        run: choco install googlechrome
+
+      - name: Set up Firefox Ubuntu
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
         uses: browser-actions/setup-firefox@latest
+
+      - name: Set up Firefox Windows
+        if: matrix.os == 'windows-latest'
+        run: choco install firefox
 
       - name: Set up Edge # works only ubuntu
         if: matrix.os == 'ubuntu-latest' && matrix.browser == 'edge'
