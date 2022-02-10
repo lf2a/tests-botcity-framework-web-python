@@ -13,8 +13,8 @@ web.driver_path = os.path.join(os.path.abspath(''), 'web-drivers', 'msedgedriver
 
 opt = browsers.edge.default_options()
 opt.add_argument('--remote-debugging-port=9222')
-# opt.add_argument('--no-sandbox')
-# opt.add_argument('--disable-dev-shm-usage')
+opt.add_argument('--no-sandbox')
+opt.add_argument('--disable-setuid-sandbox')
 opt.set_capability('platform', 'LINUX')  # WINDOWS is default value:
 opt.binary_location = '/usr/bin/microsoft-edge-stable'
 opt.use_chromium = True

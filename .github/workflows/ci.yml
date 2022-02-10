@@ -56,32 +56,35 @@ jobs:
           microsoft-edge-stable --version
           which microsoft-edge-stable
 
-#      - name: Set up Edge
+#      - name: Set up Edge # only windows
 #        uses: browser-actions/setup-edge@latest
 
-#      - name: Print Edge version
+#      - name: Print Edge version # only windows
 #        run: (Get-Item (Get-Command msedge).Source).VersionInfo.ProductVersion
 
-      - name: CHROME - Test Browser
-        run: pytest test_browser.py --browser=chrome --headless
+      - name: Test web.py
+        run: python web.py
 
-      - name: CHROME - Test Keyboard
-        run: pytest test_keyboard.py --browser=chrome --headless
-
-      - name: CHROME - Test Mouse
-        run: pytest test_mouse.py --browser=chrome --headless
-
-      - name: CHROME - Test Vision
-        run: pytest test_vision.py --browser=chrome --headless
-
-      - name: FIREFOX - Test Browser
-        run: pytest test_browser.py --browser=firefox --headless
-
-      - name: FIREFOX - Test Keyboard
-        run: pytest test_keyboard.py --browser=firefox --headless
-
-      - name: FIREFOX - Test Mouse
-        run: pytest test_mouse.py --browser=firefox --headless
-
-      - name: FIREFOX - Test Vision
-        run: pytest test_vision.py --browser=firefox --headless
+#      - name: CHROME - Test Browser
+#        run: pytest test_browser.py --browser=chrome --headless
+#
+#      - name: CHROME - Test Keyboard
+#        run: pytest test_keyboard.py --browser=chrome --headless
+#
+#      - name: CHROME - Test Mouse
+#        run: pytest test_mouse.py --browser=chrome --headless
+#
+#      - name: CHROME - Test Vision
+#        run: pytest test_vision.py --browser=chrome --headless
+#
+#      - name: FIREFOX - Test Browser
+#        run: pytest test_browser.py --browser=firefox --headless
+#
+#      - name: FIREFOX - Test Keyboard
+#        run: pytest test_keyboard.py --browser=firefox --headless
+#
+#      - name: FIREFOX - Test Mouse
+#        run: pytest test_mouse.py --browser=firefox --headless
+#
+#      - name: FIREFOX - Test Vision
+#        run: pytest test_vision.py --browser=firefox --headless
