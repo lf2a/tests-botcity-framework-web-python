@@ -14,10 +14,10 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ macos-latest ]
+#        os: [ ubuntu-latest, windows-latest, macos-latest ]
         python-version: [ 3.8, 3.10.2 ]
-        browser: [ edge ]
-#        browser: [ firefox, chrome, edge ]
+        browser: [ firefox, chrome, edge ]
 
     steps:
       - uses: actions/checkout@v2
@@ -28,11 +28,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Set up Chocolatey
-        if: matrix.os == 'windows-latest'
-        uses: crazy-max/ghaction-chocolatey@v1.6.0
-        with:
-          args: -h
+#      - name: Set up Chocolatey
+#        if: matrix.os == 'windows-latest'
+#        uses: crazy-max/ghaction-chocolatey@v1.6.0
+#        with:
+#          args: -h
 
       - name: Set up Homebrew
         if: matrix.os == 'macos-latest'
