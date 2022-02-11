@@ -9,7 +9,10 @@ def test_control_a(web: WebBot):
     web.control_a()
 
     result = conftest.get_event_result('element-result', web)
-    assert result['data'] == ['Control', 'a']
+    if conftest.OS_NAME == 'Darwin':
+        assert result['data'] == ['Meta', 'a']
+    else:
+        assert result['data'] == ['Control', 'a']
 
 
 def test_control_c(web: WebBot):
