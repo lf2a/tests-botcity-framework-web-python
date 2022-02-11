@@ -13,6 +13,22 @@ TEST_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'test.html')
 OS_NAME = platform.system()
 
 
+def setup_chrome(web: WebBot) -> WebBot:
+    pass
+
+
+def setup_firefox(web: WebBot) -> WebBot:
+    pass
+
+
+def setup_edge(web: WebBot) -> WebBot:
+    pass
+
+
+def web2(request):
+    pass
+
+
 @pytest.fixture
 def web(request):
     web = WebBot()

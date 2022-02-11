@@ -225,7 +225,7 @@ def test_scroll_up(web: WebBot):
 
 def test_set_screen_resolution(web: WebBot):
     web.browse(conftest.INDEX_PAGE)
-    web.set_screen_resolution(1280, 720)
+    web.set_screen_resolution(500, 500)
 
     page_size = web.find_element('page-size', By.ID).text
     window_size = web.find_element('window-size', By.ID).text
@@ -238,15 +238,17 @@ def test_set_screen_resolution(web: WebBot):
     if web.browser == Browser.EDGE and conftest.OS_NAME == 'Darwin' and web.headless:
         # page_size=1600x723
         # window_size=1280x720
+        # page_size=1600x723
+        # window_size=1600x802
         width = window_size.split('x')[0]
-        assert width == '1280'
+        assert width == '500'
     elif web.browser == Browser.FIREFOX and web.headless:
         # Firefox remove complete browser window including its decorations and title bar
         width = window_size.split('x')[0]
-        assert width == '1280'
+        assert width == '500'
     else:
         width = page_size.split('x')[0]
-        assert width == '1280'
+        assert width == '500'
 
 
 def test_wait_for_downloads(web: WebBot):
