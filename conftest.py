@@ -30,6 +30,9 @@ def web(request):
         elif plt == 'Windows':
             web.driver_path = os.path.join(project_path, 'web-drivers', 'windows', 'msedgedriver.exe')
         elif plt == 'Darwin':
+            opt = edge.default_options()
+            opt.set_capability('platform', 'MAC')  # WINDOWS is default value:
+            web.options = opt
             web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'msedgedriver')
 
     elif web.browser == 'firefox':
