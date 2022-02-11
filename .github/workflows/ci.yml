@@ -14,10 +14,10 @@ jobs:
 
     strategy:
       matrix:
-        os: [ macos-latest ]
-#        os: [ ubuntu-latest, windows-latest, macos-latest ]
+#        os: [ macos-latest ]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
         python-version: [ 3.8 ]
-        browser: [ edge ]
+        browser: [ chrome, firefox, edge ]
 
     steps:
       - uses: actions/checkout@v2

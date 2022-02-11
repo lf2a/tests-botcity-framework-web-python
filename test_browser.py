@@ -223,32 +223,32 @@ def test_scroll_up(web: WebBot):
     assert mouse_icon is not None
 
 
-def test_set_screen_resolution(web: WebBot):
-    web.browse(conftest.INDEX_PAGE)
-    web.set_screen_resolution(500, 500)
-
-    page_size = web.find_element('page-size', By.ID).text
-    window_size = web.find_element('window-size', By.ID).text
-
-    import logging
-    LOGGER = logging.getLogger(__name__)
-    LOGGER.info(page_size)
-    LOGGER.info(window_size)
-
-    if web.browser == Browser.EDGE and conftest.OS_NAME == 'Darwin' and web.headless:
-        # page_size=1600x723
-        # window_size=1280x720
-        # page_size=1600x723
-        # window_size=1600x802
-        width = window_size.split('x')[0]
-        assert width == '500'
-    elif web.browser == Browser.FIREFOX and web.headless:
-        # Firefox remove complete browser window including its decorations and title bar
-        width = window_size.split('x')[0]
-        assert width == '500'
-    else:
-        width = page_size.split('x')[0]
-        assert width == '500'
+# def test_set_screen_resolution(web: WebBot):
+#     web.browse(conftest.INDEX_PAGE)
+#     web.set_screen_resolution(500, 500)
+#
+#     page_size = web.find_element('page-size', By.ID).text
+#     window_size = web.find_element('window-size', By.ID).text
+#
+#     import logging
+#     LOGGER = logging.getLogger(__name__)
+#     LOGGER.info(page_size)
+#     LOGGER.info(window_size)
+#
+#     if web.browser == Browser.EDGE and conftest.OS_NAME == 'Darwin' and web.headless:
+#         # page_size=1600x723
+#         # window_size=1280x720
+#         # page_size=1600x723
+#         # window_size=1600x802
+#         width = window_size.split('x')[0]
+#         assert width == '500'
+#     elif web.browser == Browser.FIREFOX and web.headless:
+#         # Firefox remove complete browser window including its decorations and title bar
+#         width = window_size.split('x')[0]
+#         assert width == '500'
+#     else:
+#         width = page_size.split('x')[0]
+#         assert width == '500'
 
 
 def test_wait_for_downloads(web: WebBot):
@@ -304,9 +304,9 @@ def test_set_current_element(web: WebBot):
     assert result['data'] == ['Left']
 
 
-def test_print_pdf(web: WebBot):
-    web.browse(conftest.INDEX_PAGE)
-    pdf = web.print_pdf(path=os.path.join(conftest.PROJECT_DIR, 'page.pdf'))
-
-    assert os.path.exists(pdf)
-    os.remove(pdf)
+# def test_print_pdf(web: WebBot):
+#     web.browse(conftest.INDEX_PAGE)
+#     pdf = web.print_pdf(path=os.path.join(conftest.PROJECT_DIR, 'page.pdf'))
+#
+#     assert os.path.exists(pdf)
+#     os.remove(pdf)
