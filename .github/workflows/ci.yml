@@ -14,9 +14,10 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
-        python-version: [ 3.8 ]
-        browser: [ firefox, chrome, edge ]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        python-version: [ 3.8, 3.10.2 ]
+        browser: [ edge ]
+#        browser: [ firefox, chrome, edge ]
 
     steps:
       - uses: actions/checkout@v2
@@ -33,6 +34,12 @@ jobs:
         with:
           args: -h
 
+      - name: Set up Homebrew
+        if: matrix.os == 'macos-latest'
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          brew --version
+
       - name: Install Test Dependencies
         run: pip install -r requirements.txt
 
@@ -40,60 +47,60 @@ jobs:
         if: matrix.browser == 'edge'
         run: pip install msedge-selenium-tools==3.141.3
 
-      - name: Changing permissions
-        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
-        run: sudo chmod 755 web-drivers/chromedriver
-
-      - name: Changing permissions
-        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
-        run: sudo chmod 755 web-drivers/geckodriver
-
-      - name: Changing permissions
-        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'edge'
-        run: sudo chmod 755 web-drivers/msedgedriver
-
-      - name: Set up Chrome Ubuntu
-        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
-        uses: browser-actions/setup-chrome@latest
-        with:
-          chrome-version: stable
-
-      - name: Set up Chrome Windows
-        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
-        run: choco install googlechrome
-
-      - name: Set up Firefox Ubuntu
-        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
-        uses: browser-actions/setup-firefox@latest
-
-      - name: Set up Firefox Windows
-        if: matrix.os == 'windows-latest' && matrix.browser == 'firefox'
-        run: choco install firefox
-
-      - name: Set up Edge # works only ubuntu
-        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'edge'
-        run: |
-          sudo apt install wget software-properties-common apt-transport-https
-          sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
-          sudo apt update
-          sudo apt install microsoft-edge-stable
-
-      - name: Set up Edge # works only windows
-        if: matrix.os == 'windows-latest' && matrix.browser == 'edge'
-        uses: browser-actions/setup-edge@latest
-
-      - name: Test Browser actions
-        if: matrix.browser != 'edge' || matrix.os == 'windows-latest'
-        run: pytest test_browser.py --browser=${{ matrix.browser }} --headless
-
-      - name: Test Keyboard
-        if: matrix.browser != 'edge' || matrix.os == 'windows-latest'
-        run: pytest test_keyboard.py --browser=${{ matrix.browser }} --headless
-
-      - name: Test Mouse
-        if: matrix.browser != 'edge' || matrix.os == 'windows-latest'
-        run: pytest test_mouse.py --browser=${{ matrix.browser }} --headless
-
-      - name: Test Vision
-        if: matrix.browser != 'edge' || matrix.os == 'windows-latest'
-        run: pytest test_vision.py --browser=${{ matrix.browser }} --headless
+#      - name: Changing permissions
+#        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
+#        run: sudo chmod 755 web-drivers/chromedriver
+#
+#      - name: Changing permissions
+#        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
+#        run: sudo chmod 755 web-drivers/geckodriver
+#
+#      - name: Changing permissions
+#        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'edge'
+#        run: sudo chmod 755 web-drivers/msedgedriver
+#
+#      - name: Set up Chrome Ubuntu
+#        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
+#        uses: browser-actions/setup-chrome@latest
+#        with:
+#          chrome-version: stable
+#
+#      - name: Set up Chrome Windows
+#        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
+#        run: choco install googlechrome
+#
+#      - name: Set up Firefox Ubuntu
+#        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
+#        uses: browser-actions/setup-firefox@latest
+#
+#      - name: Set up Firefox Windows
+#        if: matrix.os == 'windows-latest' && matrix.browser == 'firefox'
+#        run: choco install firefox
+#
+#      - name: Set up Edge # works only ubuntu
+#        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'edge'
+#        run: |
+#          sudo apt install wget software-properties-common apt-transport-https
+#          sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
+#          sudo apt update
+#          sudo apt install microsoft-edge-stable
+#
+#      - name: Set up Edge # works only windows
+#        if: matrix.os == 'windows-latest' && matrix.browser == 'edge'
+#        uses: browser-actions/setup-edge@latest
+#
+#      - name: Test Browser actions
+#        if: matrix.browser != 'edge' || matrix.os == 'windows-latest'
+#        run: pytest test_browser.py --browser=${{ matrix.browser }} --headless
+#
+#      - name: Test Keyboard
+#        if: matrix.browser != 'edge' || matrix.os == 'windows-latest'
+#        run: pytest test_keyboard.py --browser=${{ matrix.browser }} --headless
+#
+#      - name: Test Mouse
+#        if: matrix.browser != 'edge' || matrix.os == 'windows-latest'
+#        run: pytest test_mouse.py --browser=${{ matrix.browser }} --headless
+#
+#      - name: Test Vision
+#        if: matrix.browser != 'edge' || matrix.os == 'windows-latest'
+#        run: pytest test_vision.py --browser=${{ matrix.browser }} --headless
