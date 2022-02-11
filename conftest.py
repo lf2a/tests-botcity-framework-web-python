@@ -30,7 +30,7 @@ def web(request):
         elif plt == 'Windows':
             web.driver_path = os.path.join(project_path, 'web-drivers', 'windows', 'msedgedriver.exe')
         elif plt == 'Darwin':
-            web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'msedgedriver.')
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'msedgedriver')
 
     elif web.browser == 'firefox':
         if plt == 'Linux':
