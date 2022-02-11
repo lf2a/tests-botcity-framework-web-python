@@ -30,7 +30,7 @@ def web(request):
         elif plt == 'Windows':
             web.driver_path = os.path.join(project_path, 'web-drivers', 'windows', 'msedgedriver.exe')
         elif plt == 'Darwin':
-            web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'msedgedriver.exe')
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'msedgedriver.')
 
     elif web.browser == 'firefox':
         if plt == 'Linux':
@@ -38,7 +38,7 @@ def web(request):
         elif plt == 'Windows':
             web.driver_path = os.path.join(project_path, 'web-drivers', 'windows', 'geckodriver.exe')
         elif plt == 'Darwin':
-            web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'geckodriver.exe')
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'geckodriver')
 
     else:
         if plt == 'Linux':
@@ -46,7 +46,7 @@ def web(request):
         elif plt == 'Windows':
             web.driver_path = os.path.join(project_path, 'web-drivers', 'windows', 'chromedriver.exe')
         elif plt == 'Darwin':
-            web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'chromedriver.exe')
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'chromedriver')
 
     yield web
 
