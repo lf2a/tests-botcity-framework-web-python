@@ -52,8 +52,8 @@ jobs:
 #        run: sudo chmod 755 web-drivers/linux/chromedriver
 
       - name: Changing permissions
-      if: matrix.os == 'macos-latest' && matrix.browser == 'chrome'
-      run: chmod 755 web-drivers/macos/chromedriver
+        if: matrix.os == 'macos-latest' && matrix.browser == 'chrome'
+        run: chmod 755 web-drivers/macos/chromedriver
 
 #
 #      - name: Changing permissions
@@ -82,9 +82,9 @@ jobs:
 #        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
 #        run: choco install googlechrome
 
-- name: Set up Chrome MacOS
-  if: matrix.os == 'macos-latest' && matrix.browser == 'chrome'
-  run: brew install --cask google-chrome
+      - name: Set up Chrome MacOS
+        if: matrix.os == 'macos-latest' && matrix.browser == 'chrome'
+        run: brew install --cask google-chrome
 #
 #      - name: Set up Firefox Ubuntu
 #        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
