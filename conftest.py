@@ -50,7 +50,7 @@ def setup_edge(headless: bool) -> WebBot:
     web = WebBot(headless=headless)
     web.browser = Browser.EDGE
 
-    opt = edge.default_options()
+    opt = edge.default_options(headless=headless, download_folder_path=web.download_folder_path)
     opt.set_capability('platform', 'ANY')  # WINDOWS is default value:
 
     if OS_NAME == 'Windows':
