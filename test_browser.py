@@ -228,8 +228,15 @@ def test_set_screen_resolution(web: WebBot):
     web.set_screen_resolution(1280, 720)
 
     page_size = web.find_element('page-size', By.ID).text
-    width = page_size.split('x')[0]  # WidthxHeight
-    assert width == '1280'
+    window_size = web.find_element('window-size', By.ID).text
+
+    if web.headless:
+        # Firefox remove complete browser window including its decorations and title bar
+        width = window_size.split('x')[0]
+        assert width == '1280'
+    else:
+        width = page_size.split('x')[0]
+        assert width == '1280'
 
 
 def test_wait_for_downloads(web: WebBot):
