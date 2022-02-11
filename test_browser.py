@@ -235,7 +235,7 @@ def test_set_screen_resolution(web: WebBot):
     LOGGER.info(page_size)
     LOGGER.info(window_size)
 
-    if web.headless:
+    if web.browser == Browser.FIREFOX and web.headless:
         # Firefox remove complete browser window including its decorations and title bar
         width = window_size.split('x')[0]
         assert width == '1280'
