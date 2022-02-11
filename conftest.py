@@ -9,6 +9,7 @@ from botcity.web.browsers import edge
 
 PROJECT_DIR = os.path.abspath('')
 INDEX_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'index.html')
+TEST_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'test.html')
 OS_NAME = platform.system()
 
 
