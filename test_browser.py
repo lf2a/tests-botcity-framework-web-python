@@ -227,7 +227,7 @@ def test_scroll_up(web: WebBot):
     assert mouse_icon is not None
 
 
-@pytest.mark.xfail(sys.platform == "darwin" and conftest.BROWSER == "edge", reason="bug with MacOS and Edge")
+# @pytest.mark.xfail(sys.platform == "darwin" and conftest.BROWSER == "edge", reason="bug with MacOS and Edge")
 def test_set_screen_resolution(web: WebBot):
     web.browse(conftest.INDEX_PAGE)
     web.set_screen_resolution(500, 500)
@@ -300,7 +300,7 @@ def test_set_current_element(web: WebBot):
     assert result['data'] == ['Left']
 
 
-@pytest.mark.xfail(sys.platform == "darwin" and conftest.BROWSER == "edge", reason="bug with MacOS and Edge")
+# @pytest.mark.xfail(sys.platform == "darwin" and conftest.BROWSER == "edge", reason="bug with MacOS and Edge")
 def test_print_pdf(web: WebBot):
     web.browse(conftest.INDEX_PAGE)
     pdf = web.print_pdf(path=os.path.join(conftest.PROJECT_DIR, 'page.pdf'))
