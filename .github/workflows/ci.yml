@@ -67,7 +67,7 @@ jobs:
 #      - name: Changing permissions
 #        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'edge'
 #        run: sudo chmod 755 web-drivers/linux/msedgedriver
-      -
+
       - name: Changing permissions
         if: matrix.os == 'macos-latest' && matrix.browser == 'edge'
         run: chmod 755 web-drivers/macos/msedgedriver
