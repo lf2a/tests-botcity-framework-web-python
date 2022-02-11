@@ -230,8 +230,12 @@ def test_set_screen_resolution(web: WebBot):
     page_size = web.find_element('page-size', By.ID).text
     window_size = web.find_element('window-size', By.ID).text
 
-    if web.browser == Browser.FIREFOX and web.headless \
-            or web.browser == Browser.EDGE and conftest.OS_NAME == 'Darwin':
+    import logging
+    LOGGER = logging.getLogger(__name__)
+    LOGGER.info(page_size)
+    LOGGER.info(window_size)
+
+    if web.browser == Browser.FIREFOX and web.headless:
         # Firefox remove complete browser window including its decorations and title bar
         width = window_size.split('x')[0]
         assert width == '1280'
