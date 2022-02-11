@@ -5,9 +5,9 @@ from botcity.web import WebBot, By
 
 
 def test_left_click(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.click()
@@ -17,9 +17,9 @@ def test_left_click(web: WebBot):
 
 
 def test_left_double_click(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.double_click()
@@ -29,9 +29,9 @@ def test_left_double_click(web: WebBot):
 
 
 def test_left_triple_click(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.triple_click()
@@ -41,9 +41,9 @@ def test_left_triple_click(web: WebBot):
 
 
 def test_triple_click_reltive(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.triple_click_relative(16, 140)
@@ -53,9 +53,9 @@ def test_triple_click_reltive(web: WebBot):
 
 
 def test_right_click(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.right_click()
@@ -65,9 +65,9 @@ def test_right_click(web: WebBot):
 
 
 def test_right_double_click(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.right_click(clicks=2)
@@ -77,9 +77,9 @@ def test_right_double_click(web: WebBot):
 
 
 def test_left_click_relative(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.click_relative(16, 140)
@@ -89,9 +89,9 @@ def test_left_click_relative(web: WebBot):
 
 
 def test_left_double_click_relative(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.double_click_relative(16, 140)
@@ -101,9 +101,9 @@ def test_left_double_click_relative(web: WebBot):
 
 
 def test_right_click_relative(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.right_click_relative(16, 140)
@@ -113,9 +113,9 @@ def test_right_click_relative(web: WebBot):
 
 
 def test_get_last_x(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.move()
@@ -127,9 +127,9 @@ def test_get_last_x(web: WebBot):
 
 
 def test_get_last_y(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.move()
@@ -141,9 +141,9 @@ def test_get_last_y(web: WebBot):
 
 
 def test_move_mouse(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.move()
@@ -153,9 +153,9 @@ def test_move_mouse(web: WebBot):
 
 
 def test_move_relative(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     if not web.find("mouse", matching=0.97, waiting_time=10_000):
         raise Exception('Image not found: mouse')
     web.move()  # posicionando o mouse
@@ -166,9 +166,9 @@ def test_move_relative(web: WebBot):
 
 
 def test_move_random(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     web.move_random(200, 200)
 
     mouse_x = int(web.find_element('mouse-x-pos', By.ID).text)
@@ -177,9 +177,9 @@ def test_move_random(web: WebBot):
 
 
 def test_mouse_down(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('git', os.path.join(conftest.project_path, 'resources', 'git.png'))
+    web.add_image('git', os.path.join(conftest.PROJECT_DIR, 'resources', 'git.png'))
     if not web.find("git", matching=0.97, waiting_time=10000):
         raise Exception('Image not found: git')
     web.move()
@@ -191,9 +191,9 @@ def test_mouse_down(web: WebBot):
 
 
 def test_mouse_up(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('git', os.path.join(conftest.project_path, 'resources', 'git.png'))
+    web.add_image('git', os.path.join(conftest.PROJECT_DIR, 'resources', 'git.png'))
     if not web.find("git", matching=0.97, waiting_time=10000):
         raise Exception('Image not found: git')
     web.move()
@@ -206,9 +206,9 @@ def test_mouse_up(web: WebBot):
 
 
 def test_click_on(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     web.click_on(label='mouse')
 
     result = conftest.get_event_result('element-result', web)
@@ -216,9 +216,9 @@ def test_click_on(web: WebBot):
 
 
 def test_get_element_coors(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     (x, y) = web.get_element_coords(label='mouse')
     web.click_at(x, y)
 
@@ -227,9 +227,9 @@ def test_get_element_coors(web: WebBot):
 
 
 def test_get_element_coors_centered(web: WebBot):
-    web.browse('file://' + os.path.join(conftest.project_path, 'web', 'index.html'))
+    web.browse('file://' + os.path.join(conftest.PROJECT_DIR, 'web', 'index.html'))
 
-    web.add_image('mouse', os.path.join(conftest.project_path, 'resources', 'mouse.png'))
+    web.add_image('mouse', os.path.join(conftest.PROJECT_DIR, 'resources', 'mouse.png'))
     (x, y) = web.get_element_coords_centered(label='mouse')
     web.click_at(x, y)
 
