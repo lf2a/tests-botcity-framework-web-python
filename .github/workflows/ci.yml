@@ -101,9 +101,9 @@ jobs:
         if: matrix.os == 'macos-latest' && matrix.browser == 'edge'
         run: brew install --cask microsoft-edge
 #
-#      - name: Test Browser actions
+      - name: Test Browser actions
 #        if: matrix.browser != 'edge' || matrix.os == 'windows-latest'
-#        run: pytest test_browser.py --browser=${{ matrix.browser }} --headless
+        run: pytest test_browser.py --browser=${{ matrix.browser }} --headless
 #
 #      - name: Test Keyboard
 #        if: matrix.browser != 'edge' || matrix.os == 'windows-latest'

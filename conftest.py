@@ -26,21 +26,27 @@ def web(request):
             opt.add_argument('--disable-dev-shm-usage')
             opt.set_capability('platform', 'LINUX')  # WINDOWS is default value:
             web.options = opt
-            web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver')
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'linux', 'msedgedriver')
         elif plt == 'Windows':
-            web.driver_path = os.path.join(project_path, 'web-drivers', 'msedgedriver.exe')
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'windows', 'msedgedriver.exe')
+        elif plt == 'Darwin':
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'msedgedriver.exe')
 
     elif web.browser == 'firefox':
         if plt == 'Linux':
-            web.driver_path = os.path.join(project_path, 'web-drivers', 'geckodriver')
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'linux', 'geckodriver')
         elif plt == 'Windows':
-            web.driver_path = os.path.join(project_path, 'web-drivers', 'geckodriver.exe')
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'windows', 'geckodriver.exe')
+        elif plt == 'Darwin':
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'geckodriver.exe')
 
     else:
         if plt == 'Linux':
-            web.driver_path = os.path.join(project_path, 'web-drivers', 'chromedriver')
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'linux', 'chromedriver')
         elif plt == 'Windows':
-            web.driver_path = os.path.join(project_path, 'web-drivers', 'chromedriver.exe')
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'windows', 'chromedriver.exe')
+        elif plt == 'Darwin':
+            web.driver_path = os.path.join(project_path, 'web-drivers', 'macos', 'chromedriver.exe')
 
     yield web
 
