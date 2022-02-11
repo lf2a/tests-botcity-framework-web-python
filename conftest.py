@@ -11,65 +11,79 @@ PROJECT_DIR = os.path.abspath('')
 INDEX_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'index.html')
 TEST_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'test.html')
 OS_NAME = platform.system()
+BROWSER = Browser.CHROME
 
 
-def setup_chrome(web: WebBot) -> WebBot:
-    pass
+def setup_chrome(headless: bool) -> WebBot:
+    web = WebBot(headless)
+    web.browser = Browser.CHROME
+
+    if OS_NAME == 'Windows':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'windows', 'chromedriver.exe')
+    elif OS_NAME == 'Linux':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'linux', 'chromedriver')
+    elif OS_NAME == 'Darwin':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'chromedriver')
+    else:
+        raise ValueError(f'OS [{OS_NAME}] not supported.')
+
+    return web
 
 
-def setup_firefox(web: WebBot) -> WebBot:
-    pass
+def setup_firefox(headless: bool) -> WebBot:
+    web = WebBot(headless)
+    web.browser = Browser.FIREFOX
+
+    if OS_NAME == 'Windows':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'windows', 'geckodriver.exe')
+    elif OS_NAME == 'Linux':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'linux', 'geckodriver')
+    elif OS_NAME == 'Darwin':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'geckodriver')
+    else:
+        raise ValueError(f'OS [{OS_NAME}] not supported.')
+
+    return web
 
 
-def setup_edge(web: WebBot) -> WebBot:
-    pass
+def setup_edge(headless: bool) -> WebBot:
+    web = WebBot(headless=headless)
+    web.browser = Browser.EDGE
 
+    opt = edge.default_options()
+    opt.set_capability('platform', 'ANY')  # WINDOWS is default value:
 
-def web2(request):
-    pass
+    if OS_NAME == 'Windows':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'windows', 'msedgedriver.exe')
+    elif OS_NAME == 'Linux':
+        opt.add_argument('--remote-debugging-port=9222')
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'linux', 'msedgedriver')
+    elif OS_NAME == 'Darwin':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'msedgedriver')
+    else:
+        raise ValueError(f'OS [{OS_NAME}] not supported.')
+
+    web.options = opt
+    return web
 
 
 @pytest.fixture
 def web(request):
-    web = WebBot()
-    web.headless = request.config.getoption("--headless")
-    web.browser = request.config.getoption("--browser") or Browser.CHROME
+    global BROWSER
+    BROWSER = request.config.getoption("--browser") or Browser.CHROME
 
-    if web.browser == 'edge':
-        if OS_NAME == 'Linux':
-            opt = edge.default_options()
-            opt.add_argument('--remote-debugging-port=9222')
-            opt.add_argument('--no-sandbox')
-            opt.add_argument('--disable-dev-shm-usage')
-            opt.set_capability('platform', 'LINUX')  # WINDOWS is default value:
-            web.options = opt
-            web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'linux', 'msedgedriver')
-        elif OS_NAME == 'Windows':
-            web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'windows', 'msedgedriver.exe')
-        elif OS_NAME == 'Darwin':
-            opt = edge.default_options()
-            opt.set_capability('platform', 'MAC')  # WINDOWS is default value:
-            web.options = opt
-            web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'msedgedriver')
+    is_headless = request.config.getoption("--headless")
 
-    elif web.browser == 'firefox':
-        if OS_NAME == 'Linux':
-            web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'linux', 'geckodriver')
-        elif OS_NAME == 'Windows':
-            web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'windows', 'geckodriver.exe')
-        elif OS_NAME == 'Darwin':
-            web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'geckodriver')
-
+    if BROWSER == 'chrome':
+        web = setup_chrome(is_headless)
+    elif BROWSER == 'firefox':
+        web = setup_firefox(is_headless)
+    elif BROWSER == 'edge':
+        web = setup_edge(is_headless)
     else:
-        if OS_NAME == 'Linux':
-            web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'linux', 'chromedriver')
-        elif OS_NAME == 'Windows':
-            web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'windows', 'chromedriver.exe')
-        elif OS_NAME == 'Darwin':
-            web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'chromedriver')
+        raise ValueError(f'Browser [browser] not supported.')
 
     yield web
-
     web.stop_browser()
 
 
