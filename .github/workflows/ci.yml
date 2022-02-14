@@ -15,29 +15,18 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
-        python-version: [ 3.8 ]
+        python-version: [ 3.8, 3.10.2 ]
         browser: [ chrome, firefox, edge ]
 
     steps:
       - uses: actions/checkout@v2
 
 
+      # setup tests
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Set up Chocolatey
-        if: matrix.os == 'windows-latest'
-        uses: crazy-max/ghaction-chocolatey@v1.6.0
-        with:
-          args: -h
-
-      - name: Set up Homebrew
-        if: matrix.os == 'macos-latest'
-        run: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          brew --version
 
       - name: Install Test Dependencies
         run: pip install -r requirements.txt
@@ -47,30 +36,40 @@ jobs:
         run: pip install msedge-selenium-tools==3.141.3
 
 
+
+      # setup windows
+      - name: Set up Chocolatey
+        if: matrix.os == 'windows-latest'
+        uses: crazy-max/ghaction-chocolatey@v1.6.0
+        with:
+          args: -h
+
+      - name: Set up Chrome Windows
+        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
+        run: choco install googlechrome
+
+      - name: Set up Firefox Windows
+        if: matrix.os == 'windows-latest' && matrix.browser == 'firefox'
+        run: choco install firefox
+
+      - name: Set up Edge
+        if: matrix.os == 'windows-latest' && matrix.browser == 'edge'
+        uses: browser-actions/setup-edge@latest
+
+
+
+      # setup ubuntu
       - name: Changing Ubuntu chrome-driver permissions
         if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
         run: sudo chmod 755 web-drivers/linux/chromedriver
-
-      - name: Changing MacOS chrome-driver permissions
-        if: matrix.os == 'macos-latest' && matrix.browser == 'chrome'
-        run: chmod 755 web-drivers/macos/chromedriver
 
       - name: Changing Ubuntu gecko-driver permissions
         if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
         run: sudo chmod 755 web-drivers/linux/geckodriver
 
-      - name: Changing MacOS gecko-driver permissions
-        if: matrix.os == 'macos-latest' && matrix.browser == 'firefox'
-        run: chmod 755 web-drivers/macos/geckodriver
-
       - name: Changing Ubuntu msedge-driver permissions
         if: matrix.os == 'ubuntu-latest' && matrix.browser == 'edge'
         run: sudo chmod 755 web-drivers/linux/msedgedriver
-
-      - name: Changing MacOS msedge-driver permissions
-        if: matrix.os == 'macos-latest' && matrix.browser == 'edge'
-        run: chmod 755 web-drivers/macos/msedgedriver
-
 
       - name: Set up Chrome Ubuntu
         if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
@@ -78,27 +77,9 @@ jobs:
         with:
           chrome-version: stable
 
-      - name: Set up Chrome Windows
-        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
-        run: choco install googlechrome
-
-      - name: Set up Chrome MacOS
-        if: matrix.os == 'macos-latest' && matrix.browser == 'chrome'
-        run: brew install --cask google-chrome
-
-
       - name: Set up Firefox Ubuntu
         if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
         uses: browser-actions/setup-firefox@latest
-
-      - name: Set up Firefox Windows
-        if: matrix.os == 'windows-latest' && matrix.browser == 'firefox'
-        run: choco install firefox
-
-      - name: Set up Firefox MacOS
-        if: matrix.os == 'macos-latest' && matrix.browser == 'firefox'
-        run: brew install --cask firefox
-
 
       - name: Set up Edge
         if: matrix.os == 'ubuntu-latest' && matrix.browser == 'edge'
@@ -108,27 +89,50 @@ jobs:
           sudo apt update
           sudo apt install microsoft-edge-stable
 
-      - name: Set up Edge
-        if: matrix.os == 'windows-latest' && matrix.browser == 'edge'
-        uses: browser-actions/setup-edge@latest
+
+
+      # setup macos
+      - name: Set up Homebrew
+        if: matrix.os == 'macos-latest'
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          brew --version
+
+      - name: Changing MacOS chrome-driver permissions
+        if: matrix.os == 'macos-latest' && matrix.browser == 'chrome'
+        run: chmod 755 web-drivers/macos/chromedriver
+
+      - name: Changing MacOS gecko-driver permissions
+        if: matrix.os == 'macos-latest' && matrix.browser == 'firefox'
+        run: chmod 755 web-drivers/macos/geckodriver
+
+      - name: Changing MacOS msedge-driver permissions
+        if: matrix.os == 'macos-latest' && matrix.browser == 'edge'
+        run: chmod 755 web-drivers/macos/msedgedriver
+
+      - name: Set up Chrome MacOS
+        if: matrix.os == 'macos-latest' && matrix.browser == 'chrome'
+        run: brew install --cask google-chrome
+
+      - name: Set up Firefox MacOS
+        if: matrix.os == 'macos-latest' && matrix.browser == 'firefox'
+        run: brew install --cask firefox
 
       - name: Set up Edge MacOS
         if: matrix.os == 'macos-latest' && matrix.browser == 'edge'
         run: brew install --cask microsoft-edge
 
 
+
+      # run tests
       - name: Test Browser actions
-#        if: matrix.browser != 'edge' || matrix.os == 'windows-latest' || matrix.os == 'macos-latest'
         run: pytest test_browser.py --browser=${{ matrix.browser }} --headless
 
       - name: Test Keyboard
-#        if: matrix.browser != 'edge' || matrix.os == 'windows-latest' || matrix.os == 'macos-latest'
         run: pytest test_keyboard.py --browser=${{ matrix.browser }} --headless
 
       - name: Test Mouse
-#        if: matrix.browser != 'edge' || matrix.os == 'windows-latest' || matrix.os == 'macos-latest'
         run: pytest test_mouse.py --browser=${{ matrix.browser }} --headless
 
       - name: Test Vision
-#        if: matrix.browser != 'edge' || matrix.os == 'windows-latest' || matrix.os == 'macos-latest'
         run: pytest test_vision.py --browser=${{ matrix.browser }} --headless
