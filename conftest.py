@@ -4,14 +4,12 @@ import pytest
 import platform
 import typing
 
-from botcity.web import WebBot, Browser, By
-from botcity.web.browsers import edge
+from botcity.web import WebBot, Browser, By, browsers
 
 PROJECT_DIR = os.path.abspath('')
 INDEX_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'index.html')
 TEST_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'test.html')
 OS_NAME = platform.system()
-BROWSER = Browser.CHROME
 
 
 def setup_chrome(headless: bool) -> WebBot:
@@ -26,7 +24,6 @@ def setup_chrome(headless: bool) -> WebBot:
         web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'chromedriver')
     else:
         raise ValueError(f'OS [{OS_NAME}] not supported.')
-
     return web
 
 
@@ -42,15 +39,14 @@ def setup_firefox(headless: bool) -> WebBot:
         web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'geckodriver')
     else:
         raise ValueError(f'OS [{OS_NAME}] not supported.')
-
     return web
 
 
 def setup_edge(headless: bool) -> WebBot:
-    web = WebBot(headless=headless)
+    web = WebBot()
     web.browser = Browser.EDGE
 
-    opt = edge.default_options(headless=headless, download_folder_path=web.download_folder_path)
+    opt = browsers.edge.default_options(headless=headless, download_folder_path=web.download_folder_path)
     opt.set_capability('platform', 'ANY')  # WINDOWS is default value:
 
     if OS_NAME == 'Windows':
@@ -62,27 +58,23 @@ def setup_edge(headless: bool) -> WebBot:
         web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'msedgedriver')
     else:
         raise ValueError(f'OS [{OS_NAME}] not supported.')
-
     web.options = opt
     return web
 
 
 @pytest.fixture
 def web(request):
-    global BROWSER
-    BROWSER = request.config.getoption("--browser") or Browser.CHROME
-
+    browser = request.config.getoption("--browser") or Browser.CHROME
     is_headless = request.config.getoption("--headless")
 
-    if BROWSER == 'chrome':
+    if browser == 'chrome':
         web = setup_chrome(is_headless)
-    elif BROWSER == 'firefox':
+    elif browser == 'firefox':
         web = setup_firefox(is_headless)
-    elif BROWSER == 'edge':
+    elif browser == 'edge':
         web = setup_edge(is_headless)
     else:
-        raise ValueError(f'Browser [browser] not supported.')
-
+        raise ValueError(f'Browser [{browser}] not supported.')
     yield web
     web.stop_browser()
 

@@ -1,5 +1,17 @@
 # Tests - botcity-framework-web-python
 
+## Run tests
+
+`--browsers`: `[chrome, firefox, edge]`
+
+`--headless`: run browser in headless mode.
+
+`--html=<path>/html-file`: generate html report file.
+
+```shell
+pytest --headless --browser=chrome --html=html/chrome-headless-report.html
+```
+
 | Method                          |       Tested       | Comments |
 |:--------------------------------|:------------------:|----------|
 | `browser`                       | :heavy_check_mark: |          |

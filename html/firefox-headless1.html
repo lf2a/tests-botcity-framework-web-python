@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Test Report</title>
+    <link href="assets/style.css" rel="stylesheet" type="text/css"/></head>
+  <body onLoad="init()">
+    <script>/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+function toArray(iter) {
+    if (iter === null) {
+        return null;
+    }
+    return Array.prototype.slice.call(iter);
+}
+
+function find(selector, elem) { // eslint-disable-line no-redeclare
+    if (!elem) {
+        elem = document;
+    }
+    return elem.querySelector(selector);
+}
+
+function findAll(selector, elem) {
+    if (!elem) {
+        elem = document;
+    }
+    return toArray(elem.querySelectorAll(selector));
+}
+
+function sortColumn(elem) {
+    toggleSortStates(elem);
+    const colIndex = toArray(elem.parentNode.childNodes).indexOf(elem);
+    let key;
+    if (elem.classList.contains('result')) {
+        key = keyResult;
+    } else if (elem.classList.contains('links')) {
+        key = keyLink;
+    } else {
+        key = keyAlpha;
+    }
+    sortTable(elem, key(colIndex));
+}
+
+function showAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(showExtras);
+}
+
+function hideAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(hideExtras);
+}
+
+function showExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.remove('collapsed');
+    expandcollapse.classList.remove('expander');
+    expandcollapse.classList.add('collapser');
+}
+
+function hideExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.add('collapsed');
+    expandcollapse.classList.remove('collapser');
+    expandcollapse.classList.add('expander');
+}
+
+function showFilters() {
+    const filterItems = document.getElementsByClassName('filter');
+    for (let i = 0; i < filterItems.length; i++)
+        filterItems[i].hidden = false;
+}
+
+function addCollapse() {
+    // Add links for show/hide all
+    const resulttable = find('table#results-table');
+    const showhideall = document.createElement('p');
+    showhideall.innerHTML = '<a href="javascript:showAllExtras()">Show all details</a> / ' +
+                            '<a href="javascript:hideAllExtras()">Hide all details</a>';
+    resulttable.parentElement.insertBefore(showhideall, resulttable);
+
+    // Add show/hide link to each result
+    findAll('.col-result').forEach(function(elem) {
+        const collapsed = getQueryParameter('collapsed') || 'Passed';
+        const extras = elem.parentNode.nextElementSibling;
+        const expandcollapse = document.createElement('span');
+        if (extras.classList.contains('collapsed')) {
+            expandcollapse.classList.add('expander');
+        } else if (collapsed.includes(elem.innerHTML)) {
+            extras.classList.add('collapsed');
+            expandcollapse.classList.add('expander');
+        } else {
+            expandcollapse.classList.add('collapser');
+        }
+        elem.appendChild(expandcollapse);
+
+        elem.addEventListener('click', function(event) {
+            if (event.currentTarget.parentNode.nextElementSibling.classList.contains('collapsed')) {
+                showExtras(event.currentTarget);
+            } else {
+                hideExtras(event.currentTarget);
+            }
+        });
+    });
+}
+
+function getQueryParameter(name) {
+    const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+function init () { // eslint-disable-line no-unused-vars
+    resetSortHeaders();
+
+    addCollapse();
+
+    showFilters();
+
+    sortColumn(find('.initial-sort'));
+
+    findAll('.sortable').forEach(function(elem) {
+        elem.addEventListener('click',
+            function() {
+                sortColumn(elem);
+            }, false);
+    });
+}
+
+function sortTable(clicked, keyFunc) {
+    const rows = findAll('.results-table-row');
+    const reversed = !clicked.classList.contains('asc');
+    const sortedRows = sort(rows, keyFunc, reversed);
+    /* Whole table is removed here because browsers acts much slower
+     * when appending existing elements.
+     */
+    const thead = document.getElementById('results-table-head');
+    document.getElementById('results-table').remove();
+    const parent = document.createElement('table');
+    parent.id = 'results-table';
+    parent.appendChild(thead);
+    sortedRows.forEach(function(elem) {
+        parent.appendChild(elem);
+    });
+    document.getElementsByTagName('BODY')[0].appendChild(parent);
+}
+
+function sort(items, keyFunc, reversed) {
+    const sortArray = items.map(function(item, i) {
+        return [keyFunc(item), i];
+    });
+
+    sortArray.sort(function(a, b) {
+        const keyA = a[0];
+        const keyB = b[0];
+
+        if (keyA == keyB) return 0;
+
+        if (reversed) {
+            return keyA < keyB ? 1 : -1;
+        } else {
+            return keyA > keyB ? 1 : -1;
+        }
+    });
+
+    return sortArray.map(function(item) {
+        const index = item[1];
+        return items[index];
+    });
+}
+
+function keyAlpha(colIndex) {
+    return function(elem) {
+        return elem.childNodes[1].childNodes[colIndex].firstChild.data.toLowerCase();
+    };
+}
+
+function keyLink(colIndex) {
+    return function(elem) {
+        const dataCell = elem.childNodes[1].childNodes[colIndex].firstChild;
+        return dataCell == null ? '' : dataCell.innerText.toLowerCase();
+    };
+}
+
+function keyResult(colIndex) {
+    return function(elem) {
+        const strings = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed',
+            'Skipped', 'Passed'];
+        return strings.indexOf(elem.childNodes[1].childNodes[colIndex].firstChild.data);
+    };
+}
+
+function resetSortHeaders() {
+    findAll('.sort-icon').forEach(function(elem) {
+        elem.parentNode.removeChild(elem);
+    });
+    findAll('.sortable').forEach(function(elem) {
+        const icon = document.createElement('div');
+        icon.className = 'sort-icon';
+        icon.textContent = 'vvv';
+        elem.insertBefore(icon, elem.firstChild);
+        elem.classList.remove('desc', 'active');
+        elem.classList.add('asc', 'inactive');
+    });
+}
+
+function toggleSortStates(elem) {
+    //if active, toggle between asc and desc
+    if (elem.classList.contains('active')) {
+        elem.classList.toggle('asc');
+        elem.classList.toggle('desc');
+    }
+
+    //if inactive, reset all other functions and add ascending active
+    if (elem.classList.contains('inactive')) {
+        resetSortHeaders();
+        elem.classList.remove('inactive');
+        elem.classList.add('active');
+    }
+}
+
+function isAllRowsHidden(value) {
+    return value.hidden == false;
+}
+
+function filterTable(elem) { // eslint-disable-line no-unused-vars
+    const outcomeAtt = 'data-test-result';
+    const outcome = elem.getAttribute(outcomeAtt);
+    const classOutcome = outcome + ' results-table-row';
+    const outcomeRows = document.getElementsByClassName(classOutcome);
+
+    for(let i = 0; i < outcomeRows.length; i++){
+        outcomeRows[i].hidden = !elem.checked;
+    }
+
+    const rows = findAll('.results-table-row').filter(isAllRowsHidden);
+    const allRowsHidden = rows.length == 0 ? true : false;
+    const notFoundMessage = document.getElementById('not-found-message');
+    notFoundMessage.hidden = !allRowsHidden;
+}
+</script>
+    <h1>firefox-headless1.html</h1>
+    <p>Report generated on 15-Feb-2022 at 12:41:14 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a> v3.1.1</p>
+    <h2>Environment</h2>
+    <table id="environment">
+      <tr>
+        <td>Packages</td>
+        <td>{"pluggy": "1.0.0", "py": "1.11.0", "pytest": "7.0.0"}</td></tr>
+      <tr>
+        <td>Platform</td>
+        <td>Windows-10-10.0.22000-SP0</td></tr>
+      <tr>
+        <td>Plugins</td>
+        <td>{"html": "3.1.1", "metadata": "1.11.0"}</td></tr>
+      <tr>
+        <td>Python</td>
+        <td>3.10.2</td></tr></table>
+    <h2>Summary</h2>
+    <p>43 tests ran in 243.50 seconds. </p>
+    <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="passed">36 passed</span>, <input checked="true" class="filter" data-test-result="skipped" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="skipped">0 skipped</span>, <input checked="true" class="filter" data-test-result="failed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="failed">7 failed</span>, <input checked="true" class="filter" data-test-result="error" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="error">0 errors</span>, <input checked="true" class="filter" data-test-result="xfailed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xfailed">0 expected failures</span>, <input checked="true" class="filter" data-test-result="xpassed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xpassed">0 unexpected passes</span>
+    <h2>Results</h2>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable result initial-sort" col="result">Result</th>
+          <th class="sortable" col="name">Test</th>
+          <th class="sortable" col="duration">Duration</th>
+          <th class="sortable links" col="links">Links</th></tr>
+        <tr hidden="true" id="not-found-message">
+          <th colspan="4">No results found. Try to check the filters</th></tr></thead>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">tests/test_browser.py::test_get_image_from_map</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">web = &lt;botcity.web.bot.WebBot object at 0x00000248557B07C0&gt;<br/><br/>    def test_get_image_from_map(web: WebBot):<br/>        web.add_image(&#x27;mouse&#x27;, os.path.join(conftest.PROJECT_DIR, &#x27;../resources&#x27;, &#x27;mouse.png&#x27;))<br/>&gt;       img = web.get_image_from_map(&#x27;mouse&#x27;)<br/><br/>tests\test_browser.py:92: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>venv\lib\site-packages\botcity\web\bot.py:354: in get_image_from_map<br/>    img = Image.open(path)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>fp = &#x27;D:\\BotCity\\projetos\\sidequest\\web-test\\../resources\\mouse.png&#x27;, mode = &#x27;r&#x27;, formats = []<br/><br/>    def open(fp, mode=&quot;r&quot;, formats=None):<br/>        &quot;&quot;&quot;<br/>        Opens and identifies the given image file.<br/>    <br/>        This is a lazy operation; this function identifies the file, but<br/>        the file remains open and the actual image data is not read from<br/>        the file until you try to process the data (or call the<br/>        :py:meth:`~PIL.Image.Image.load` method).  See<br/>        :py:func:`~PIL.Image.new`. See :ref:`file-handling`.<br/>    <br/>        :param fp: A filename (string), pathlib.Path object or a file object.<br/>           The file object must implement ``file.read``,<br/>           ``file.seek``, and ``file.tell`` methods,<br/>           and be opened in binary mode.<br/>        :param mode: The mode.  If given, this argument must be &quot;r&quot;.<br/>        :param formats: A list or tuple of formats to attempt to load the file in.<br/>           This can be used to restrict the set of formats checked.<br/>           Pass ``None`` to try all supported formats. You can print the set of<br/>           available formats by running ``python3 -m PIL`` or using<br/>           the :py:func:`PIL.features.pilinfo` function.<br/>        :returns: An :py:class:`~PIL.Image.Image` object.<br/>        :exception FileNotFoundError: If the file cannot be found.<br/>        :exception PIL.UnidentifiedImageError: If the image cannot be opened and<br/>           identified.<br/>        :exception ValueError: If the ``mode`` is not &quot;r&quot;, or if a ``StringIO``<br/>           instance is used for ``fp``.<br/>        :exception TypeError: If ``formats`` is not ``None``, a list or a tuple.<br/>        &quot;&quot;&quot;<br/>    <br/>        if mode != &quot;r&quot;:<br/>            raise ValueError(f&quot;bad mode {repr(mode)}&quot;)<br/>        elif isinstance(fp, io.StringIO):<br/>            raise ValueError(<br/>                &quot;StringIO cannot be used to open an image. &quot;<br/>                &quot;Binary data must be used instead.&quot;<br/>            )<br/>    <br/>        if formats is None:<br/>            formats = ID<br/>        elif not isinstance(formats, (list, tuple)):<br/>            raise TypeError(&quot;formats must be a list or tuple&quot;)<br/>    <br/>        exclusive_fp = False<br/>        filename = &quot;&quot;<br/>        if isinstance(fp, Path):<br/>            filename = str(fp.resolve())<br/>        elif isPath(fp):<br/>            filename = fp<br/>    <br/>        if filename:<br/>&gt;           fp = builtins.open(filename, &quot;rb&quot;)<br/><span class="error">E           FileNotFoundError: [Errno 2] No such file or directory: &#x27;D:\\BotCity\\projetos\\sidequest\\web-test\\../resources\\mouse.png&#x27;</span><br/><br/>venv\lib\site-packages\PIL\Image.py:2953: FileNotFoundError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">tests/test_browser.py::test_get_screenshot</td>
+          <td class="col-duration">5.24</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">web = &lt;botcity.web.bot.WebBot object at 0x00000248557FA4D0&gt;<br/><br/>    def test_get_screenshot(web: WebBot):<br/>        web.browse(conftest.INDEX_PAGE)<br/>        fp = os.path.join(&#x27;../resources&#x27;, &#x27;screenshot_test.png&#x27;)<br/>&gt;       img = web.get_screenshot(fp)<br/><br/>tests\test_browser.py:127: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>venv\lib\site-packages\botcity\web\bot.py:703: in get_screenshot<br/>    return self.screenshot(filepath, region)<br/>venv\lib\site-packages\botcity\web\bot.py:689: in screenshot<br/>    img.save(filepath)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;PIL.Image.Image image mode=RGBA size=1600x900 at 0x248557FAFB0&gt;, fp = &#x27;../resources\\screenshot_test.png&#x27;, format = &#x27;PNG&#x27;, params = {}, filename = &#x27;../resources\\screenshot_test.png&#x27;, open_fp = True<br/>save_all = False, ext = &#x27;.png&#x27;, save_handler = &lt;function _save at 0x0000024855BBEA70&gt;<br/><br/>    def save(self, fp, format=None, **params):<br/>        &quot;&quot;&quot;<br/>        Saves this image under the given filename.  If no format is<br/>        specified, the format to use is determined from the filename<br/>        extension, if possible.<br/>    <br/>        Keyword options can be used to provide additional instructions<br/>        to the writer. If a writer doesn&#x27;t recognise an option, it is<br/>        silently ignored. The available options are described in the<br/>        :doc:`image format documentation<br/>        &lt;../handbook/image-file-formats&gt;` for each writer.<br/>    <br/>        You can use a file object instead of a filename. In this case,<br/>        you must always specify the format. The file object must<br/>        implement the ``seek``, ``tell``, and ``write``<br/>        methods, and be opened in binary mode.<br/>    <br/>        :param fp: A filename (string), pathlib.Path object or file object.<br/>        :param format: Optional format override.  If omitted, the<br/>           format to use is determined from the filename extension.<br/>           If a file object was used instead of a filename, this<br/>           parameter should always be used.<br/>        :param params: Extra parameters to the image writer.<br/>        :returns: None<br/>        :exception ValueError: If the output format could not be determined<br/>           from the file name.  Use the format option to solve this.<br/>        :exception OSError: If the file could not be written.  The file<br/>           may have been created, and may contain partial data.<br/>        &quot;&quot;&quot;<br/>    <br/>        filename = &quot;&quot;<br/>        open_fp = False<br/>        if isinstance(fp, Path):<br/>            filename = str(fp)<br/>            open_fp = True<br/>        elif isPath(fp):<br/>            filename = fp<br/>            open_fp = True<br/>        elif fp == sys.stdout:<br/>            try:<br/>                fp = sys.stdout.buffer<br/>            except AttributeError:<br/>                pass<br/>        if not filename and hasattr(fp, &quot;name&quot;) and isPath(fp.name):<br/>            # only set the name for metadata purposes<br/>            filename = fp.name<br/>    <br/>        # may mutate self!<br/>        self._ensure_mutable()<br/>    <br/>        save_all = params.pop(&quot;save_all&quot;, False)<br/>        self.encoderinfo = params<br/>        self.encoderconfig = ()<br/>    <br/>        preinit()<br/>    <br/>        ext = os.path.splitext(filename)[1].lower()<br/>    <br/>        if not format:<br/>            if ext not in EXTENSION:<br/>                init()<br/>            try:<br/>                format = EXTENSION[ext]<br/>            except KeyError as e:<br/>                raise ValueError(f&quot;unknown file extension: {ext}&quot;) from e<br/>    <br/>        if format.upper() not in SAVE:<br/>            init()<br/>        if save_all:<br/>            save_handler = SAVE_ALL[format.upper()]<br/>        else:<br/>            save_handler = SAVE[format.upper()]<br/>    <br/>        if open_fp:<br/>            if params.get(&quot;append&quot;, False):<br/>                # Open also for reading (&quot;+&quot;), because TIFF save_all<br/>                # writer needs to go back and edit the written data.<br/>                fp = builtins.open(filename, &quot;r+b&quot;)<br/>            else:<br/>&gt;               fp = builtins.open(filename, &quot;w+b&quot;)<br/><span class="error">E               FileNotFoundError: [Errno 2] No such file or directory: &#x27;../resources\\screenshot_test.png&#x27;</span><br/><br/>venv\lib\site-packages\PIL\Image.py:2209: FileNotFoundError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">tests/test_browser.py::test_screen_cut</td>
+          <td class="col-duration">4.72</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">web = &lt;botcity.web.bot.WebBot object at 0x00000248557E0B20&gt;<br/><br/>    def test_screen_cut(web: WebBot):<br/>        web.browse(conftest.INDEX_PAGE)<br/>        fp = os.path.join(&#x27;../resources&#x27;, &#x27;screen_cut_test.png&#x27;)<br/>        img = web.screen_cut(0, 0, 100, 200)<br/>&gt;       img.save(fp)<br/><br/>tests\test_browser.py:137: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;PIL.Image.Image image mode=RGBA size=100x200 at 0x248557E1F00&gt;, fp = &#x27;../resources\\screen_cut_test.png&#x27;, format = &#x27;PNG&#x27;, params = {}, filename = &#x27;../resources\\screen_cut_test.png&#x27;, open_fp = True<br/>save_all = False, ext = &#x27;.png&#x27;, save_handler = &lt;function _save at 0x0000024855BBEA70&gt;<br/><br/>    def save(self, fp, format=None, **params):<br/>        &quot;&quot;&quot;<br/>        Saves this image under the given filename.  If no format is<br/>        specified, the format to use is determined from the filename<br/>        extension, if possible.<br/>    <br/>        Keyword options can be used to provide additional instructions<br/>        to the writer. If a writer doesn&#x27;t recognise an option, it is<br/>        silently ignored. The available options are described in the<br/>        :doc:`image format documentation<br/>        &lt;../handbook/image-file-formats&gt;` for each writer.<br/>    <br/>        You can use a file object instead of a filename. In this case,<br/>        you must always specify the format. The file object must<br/>        implement the ``seek``, ``tell``, and ``write``<br/>        methods, and be opened in binary mode.<br/>    <br/>        :param fp: A filename (string), pathlib.Path object or file object.<br/>        :param format: Optional format override.  If omitted, the<br/>           format to use is determined from the filename extension.<br/>           If a file object was used instead of a filename, this<br/>           parameter should always be used.<br/>        :param params: Extra parameters to the image writer.<br/>        :returns: None<br/>        :exception ValueError: If the output format could not be determined<br/>           from the file name.  Use the format option to solve this.<br/>        :exception OSError: If the file could not be written.  The file<br/>           may have been created, and may contain partial data.<br/>        &quot;&quot;&quot;<br/>    <br/>        filename = &quot;&quot;<br/>        open_fp = False<br/>        if isinstance(fp, Path):<br/>            filename = str(fp)<br/>            open_fp = True<br/>        elif isPath(fp):<br/>            filename = fp<br/>            open_fp = True<br/>        elif fp == sys.stdout:<br/>            try:<br/>                fp = sys.stdout.buffer<br/>            except AttributeError:<br/>                pass<br/>        if not filename and hasattr(fp, &quot;name&quot;) and isPath(fp.name):<br/>            # only set the name for metadata purposes<br/>            filename = fp.name<br/>    <br/>        # may mutate self!<br/>        self._ensure_mutable()<br/>    <br/>        save_all = params.pop(&quot;save_all&quot;, False)<br/>        self.encoderinfo = params<br/>        self.encoderconfig = ()<br/>    <br/>        preinit()<br/>    <br/>        ext = os.path.splitext(filename)[1].lower()<br/>    <br/>        if not format:<br/>            if ext not in EXTENSION:<br/>                init()<br/>            try:<br/>                format = EXTENSION[ext]<br/>            except KeyError as e:<br/>                raise ValueError(f&quot;unknown file extension: {ext}&quot;) from e<br/>    <br/>        if format.upper() not in SAVE:<br/>            init()<br/>        if save_all:<br/>            save_handler = SAVE_ALL[format.upper()]<br/>        else:<br/>            save_handler = SAVE[format.upper()]<br/>    <br/>        if open_fp:<br/>            if params.get(&quot;append&quot;, False):<br/>                # Open also for reading (&quot;+&quot;), because TIFF save_all<br/>                # writer needs to go back and edit the written data.<br/>                fp = builtins.open(filename, &quot;r+b&quot;)<br/>            else:<br/>&gt;               fp = builtins.open(filename, &quot;w+b&quot;)<br/><span class="error">E               FileNotFoundError: [Errno 2] No such file or directory: &#x27;../resources\\screen_cut_test.png&#x27;</span><br/><br/>venv\lib\site-packages\PIL\Image.py:2209: FileNotFoundError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">tests/test_browser.py::test_set_file_input_element</td>
+          <td class="col-duration">4.70</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">web = &lt;botcity.web.bot.WebBot object at 0x0000024855799EA0&gt;<br/><br/>    def test_set_file_input_element(web: WebBot):<br/>        web.browse(conftest.INDEX_PAGE)<br/>        input_file_element = web.find_element(&#x27;file&#x27;, By.ID)<br/>    <br/>        pdf_file = os.path.join(conftest.PROJECT_DIR, &#x27;../web&#x27;, &#x27;sample.pdf&#x27;)<br/>&gt;       web.set_file_input_element(input_file_element, pdf_file)<br/><br/>tests\test_browser.py:177: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>venv\lib\site-packages\botcity\web\bot.py:1105: in set_file_input_element<br/>    element.send_keys(fpath)<br/>venv\lib\site-packages\selenium\webdriver\remote\webelement.py:477: in send_keys<br/>    self._execute(Command.SEND_KEYS_TO_ELEMENT,<br/>venv\lib\site-packages\selenium\webdriver\remote\webelement.py:633: in _execute<br/>    return self._parent.execute(command, params)<br/>venv\lib\site-packages\selenium\webdriver\remote\webdriver.py:321: in execute<br/>    self.error_handler.check_response(response)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x0000024855B807C0&gt;<br/>response = {&#x27;status&#x27;: 400, &#x27;value&#x27;: &#x27;{&quot;value&quot;:{&quot;error&quot;:&quot;invalid argument&quot;,&quot;message&quot;:&quot;File not found: D:\\\\BotCity\\\\projetos\\\...d/webdriver/Errors.jsm:312:5\\ninteraction.uploadFiles@chrome://remote/content/marionette/interaction.js:539:13\\n&quot;}}&#x27;}<br/><br/>    def check_response(self, response):<br/>        &quot;&quot;&quot;<br/>        Checks that a JSON response from the WebDriver does not have an error.<br/>    <br/>        :Args:<br/>         - response - The JSON response from the WebDriver server as a dictionary<br/>           object.<br/>    <br/>        :Raises: If the response contains an error message.<br/>        &quot;&quot;&quot;<br/>        status = response.get(&#x27;status&#x27;, None)<br/>        if status is None or status == ErrorCode.SUCCESS:<br/>            return<br/>        value = None<br/>        message = response.get(&quot;message&quot;, &quot;&quot;)<br/>        screen = response.get(&quot;screen&quot;, &quot;&quot;)<br/>        stacktrace = None<br/>        if isinstance(status, int):<br/>            value_json = response.get(&#x27;value&#x27;, None)<br/>            if value_json and isinstance(value_json, basestring):<br/>                import json<br/>                try:<br/>                    value = json.loads(value_json)<br/>                    if len(value.keys()) == 1:<br/>                        value = value[&#x27;value&#x27;]<br/>                    status = value.get(&#x27;error&#x27;, None)<br/>                    if status is None:<br/>                        status = value[&quot;status&quot;]<br/>                        message = value[&quot;value&quot;]<br/>                        if not isinstance(message, basestring):<br/>                            value = message<br/>                            message = message.get(&#x27;message&#x27;)<br/>                    else:<br/>                        message = value.get(&#x27;message&#x27;, None)<br/>                except ValueError:<br/>                    pass<br/>    <br/>        exception_class = ErrorInResponseException<br/>        if status in ErrorCode.NO_SUCH_ELEMENT:<br/>            exception_class = NoSuchElementException<br/>        elif status in ErrorCode.NO_SUCH_FRAME:<br/>            exception_class = NoSuchFrameException<br/>        elif status in ErrorCode.NO_SUCH_WINDOW:<br/>            exception_class = NoSuchWindowException<br/>        elif status in ErrorCode.STALE_ELEMENT_REFERENCE:<br/>            exception_class = StaleElementReferenceException<br/>        elif status in ErrorCode.ELEMENT_NOT_VISIBLE:<br/>            exception_class = ElementNotVisibleException<br/>        elif status in ErrorCode.INVALID_ELEMENT_STATE:<br/>            exception_class = InvalidElementStateException<br/>        elif status in ErrorCode.INVALID_SELECTOR \<br/>                or status in ErrorCode.INVALID_XPATH_SELECTOR \<br/>                or status in ErrorCode.INVALID_XPATH_SELECTOR_RETURN_TYPER:<br/>            exception_class = InvalidSelectorException<br/>        elif status in ErrorCode.ELEMENT_IS_NOT_SELECTABLE:<br/>            exception_class = ElementNotSelectableException<br/>        elif status in ErrorCode.ELEMENT_NOT_INTERACTABLE:<br/>            exception_class = ElementNotInteractableException<br/>        elif status in ErrorCode.INVALID_COOKIE_DOMAIN:<br/>            exception_class = InvalidCookieDomainException<br/>        elif status in ErrorCode.UNABLE_TO_SET_COOKIE:<br/>            exception_class = UnableToSetCookieException<br/>        elif status in ErrorCode.TIMEOUT:<br/>            exception_class = TimeoutException<br/>        elif status in ErrorCode.SCRIPT_TIMEOUT:<br/>            exception_class = TimeoutException<br/>        elif status in ErrorCode.UNKNOWN_ERROR:<br/>            exception_class = WebDriverException<br/>        elif status in ErrorCode.UNEXPECTED_ALERT_OPEN:<br/>            exception_class = UnexpectedAlertPresentException<br/>        elif status in ErrorCode.NO_ALERT_OPEN:<br/>            exception_class = NoAlertPresentException<br/>        elif status in ErrorCode.IME_NOT_AVAILABLE:<br/>            exception_class = ImeNotAvailableException<br/>        elif status in ErrorCode.IME_ENGINE_ACTIVATION_FAILED:<br/>            exception_class = ImeActivationFailedException<br/>        elif status in ErrorCode.MOVE_TARGET_OUT_OF_BOUNDS:<br/>            exception_class = MoveTargetOutOfBoundsException<br/>        elif status in ErrorCode.JAVASCRIPT_ERROR:<br/>            exception_class = JavascriptException<br/>        elif status in ErrorCode.SESSION_NOT_CREATED:<br/>            exception_class = SessionNotCreatedException<br/>        elif status in ErrorCode.INVALID_ARGUMENT:<br/>            exception_class = InvalidArgumentException<br/>        elif status in ErrorCode.NO_SUCH_COOKIE:<br/>            exception_class = NoSuchCookieException<br/>        elif status in ErrorCode.UNABLE_TO_CAPTURE_SCREEN:<br/>            exception_class = ScreenshotException<br/>        elif status in ErrorCode.ELEMENT_CLICK_INTERCEPTED:<br/>            exception_class = ElementClickInterceptedException<br/>        elif status in ErrorCode.INSECURE_CERTIFICATE:<br/>            exception_class = InsecureCertificateException<br/>        elif status in ErrorCode.INVALID_COORDINATES:<br/>            exception_class = InvalidCoordinatesException<br/>        elif status in ErrorCode.INVALID_SESSION_ID:<br/>            exception_class = InvalidSessionIdException<br/>        elif status in ErrorCode.UNKNOWN_METHOD:<br/>            exception_class = UnknownMethodException<br/>        else:<br/>            exception_class = WebDriverException<br/>        if value == &#x27;&#x27; or value is None:<br/>            value = response[&#x27;value&#x27;]<br/>        if isinstance(value, basestring):<br/>            if exception_class == ErrorInResponseException:<br/>                raise exception_class(response, value)<br/>            raise exception_class(value)<br/>        if message == &quot;&quot; and &#x27;message&#x27; in value:<br/>            message = value[&#x27;message&#x27;]<br/>    <br/>        screen = None<br/>        if &#x27;screen&#x27; in value:<br/>            screen = value[&#x27;screen&#x27;]<br/>    <br/>        stacktrace = None<br/>        if &#x27;stackTrace&#x27; in value and value[&#x27;stackTrace&#x27;]:<br/>            stacktrace = []<br/>            try:<br/>                for frame in value[&#x27;stackTrace&#x27;]:<br/>                    line = self._value_or_default(frame, &#x27;lineNumber&#x27;, &#x27;&#x27;)<br/>                    file = self._value_or_default(frame, &#x27;fileName&#x27;, &#x27;&lt;anonymous&gt;&#x27;)<br/>                    if line:<br/>                        file = &quot;%s:%s&quot; % (file, line)<br/>                    meth = self._value_or_default(frame, &#x27;methodName&#x27;, &#x27;&lt;anonymous&gt;&#x27;)<br/>                    if &#x27;className&#x27; in frame:<br/>                        meth = &quot;%s.%s&quot; % (frame[&#x27;className&#x27;], meth)<br/>                    msg = &quot;    at %s (%s)&quot;<br/>                    msg = msg % (meth, file)<br/>                    stacktrace.append(msg)<br/>            except TypeError:<br/>                pass<br/>        if exception_class == ErrorInResponseException:<br/>            raise exception_class(response, message)<br/>        elif exception_class == UnexpectedAlertPresentException:<br/>            alert_text = None<br/>            if &#x27;data&#x27; in value:<br/>                alert_text = value[&#x27;data&#x27;].get(&#x27;text&#x27;)<br/>            elif &#x27;alert&#x27; in value:<br/>                alert_text = value[&#x27;alert&#x27;].get(&#x27;text&#x27;)<br/>            raise exception_class(message, screen, stacktrace, alert_text)<br/>&gt;       raise exception_class(message, screen, stacktrace)<br/><span class="error">E       selenium.common.exceptions.InvalidArgumentException: Message: File not found: D:\BotCity\projetos\sidequest\web\sample.pdf</span><br/><br/>venv\lib\site-packages\selenium\webdriver\remote\errorhandler.py:242: InvalidArgumentException<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">tests/test_browser.py::test_scroll_down</td>
+          <td class="col-duration">9.02</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">web = &lt;botcity.web.bot.WebBot object at 0x00000248556B7640&gt;<br/><br/>    def test_scroll_down(web: WebBot):<br/>        web.browse(conftest.INDEX_PAGE)<br/>        web.add_image(&#x27;python&#x27;, os.path.join(conftest.PROJECT_DIR, &#x27;../resources&#x27;, &#x27;python.png&#x27;))<br/>        web.scroll_down(20)<br/>    <br/>&gt;       python_icon = web.find(&quot;python&quot;, matching=0.97, waiting_time=10000)<br/><br/>tests\test_browser.py:216: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>venv\lib\site-packages\botcity\web\bot.py:459: in find<br/>    return self.find_until(label=label, x=x, y=y, width=width, height=height, threshold=threshold,<br/>venv\lib\site-packages\botcity\web\bot.py:516: in find_until<br/>    ele = next(it)<br/>venv\lib\site-packages\botcity\web\cv2find.py:104: in locate_all_opencv<br/>    needle_image = _load_cv2(needle_image, grayscale)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>img = &#x27;D:\\BotCity\\projetos\\sidequest\\web-test\\../resources\\python.png&#x27;, grayscale = False<br/><br/>    def _load_cv2(img, grayscale=False):<br/>        &quot;&quot;&quot;<br/>        TODO<br/>        &quot;&quot;&quot;<br/>        # load images if given filename, or convert as needed to opencv<br/>        # Alpha layer just causes failures at this point, so flatten to RGB.<br/>        # RGBA: load with -1 * cv2.CV_LOAD_IMAGE_COLOR to preserve alpha<br/>        # to matchTemplate, need template and image to be the same wrt having alpha<br/>    <br/>        if isinstance(img, str):<br/>            # The function imread loads an image from the specified file and<br/>            # returns it. If the image cannot be read (because of missing<br/>            # file, improper permissions, unsupported or invalid format),<br/>            # the function returns an empty matrix<br/>            # http://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html<br/>            if grayscale:<br/>                img_cv = cv2.imread(img, LOAD_GRAYSCALE)<br/>            else:<br/>                img_cv = cv2.imread(img, LOAD_COLOR)<br/>            if img_cv is None:<br/>&gt;               raise IOError(&quot;Failed to read %s because file is missing, &quot;<br/>                              &quot;has improper permissions, or is an &quot;<br/><span class="error">E                             OSError: Failed to read D:\BotCity\projetos\sidequest\web-test\../resources\python.png because file is missing, has improper permissions, or is an unsupported or invalid format</span><br/><br/>venv\lib\site-packages\botcity\web\cv2find.py:69: OSError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">tests/test_browser.py::test_scroll_up</td>
+          <td class="col-duration">9.37</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">web = &lt;botcity.web.bot.WebBot object at 0x0000024856DB25C0&gt;<br/><br/>    def test_scroll_up(web: WebBot):<br/>        web.browse(conftest.INDEX_PAGE)<br/>        web.add_image(&#x27;mouse&#x27;, os.path.join(conftest.PROJECT_DIR, &#x27;../resources&#x27;, &#x27;mouse.png&#x27;))<br/>        web.type_keys([web.KEYS.SHIFT, &#x27;d&#x27;])  # scroll down trigger<br/>        web.scroll_up(20)<br/>    <br/>&gt;       mouse_icon = web.find(&quot;mouse&quot;, matching=0.97, waiting_time=10_000)<br/><br/>tests\test_browser.py:226: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>venv\lib\site-packages\botcity\web\bot.py:459: in find<br/>    return self.find_until(label=label, x=x, y=y, width=width, height=height, threshold=threshold,<br/>venv\lib\site-packages\botcity\web\bot.py:516: in find_until<br/>    ele = next(it)<br/>venv\lib\site-packages\botcity\web\cv2find.py:104: in locate_all_opencv<br/>    needle_image = _load_cv2(needle_image, grayscale)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>img = &#x27;D:\\BotCity\\projetos\\sidequest\\web-test\\../resources\\mouse.png&#x27;, grayscale = False<br/><br/>    def _load_cv2(img, grayscale=False):<br/>        &quot;&quot;&quot;<br/>        TODO<br/>        &quot;&quot;&quot;<br/>        # load images if given filename, or convert as needed to opencv<br/>        # Alpha layer just causes failures at this point, so flatten to RGB.<br/>        # RGBA: load with -1 * cv2.CV_LOAD_IMAGE_COLOR to preserve alpha<br/>        # to matchTemplate, need template and image to be the same wrt having alpha<br/>    <br/>        if isinstance(img, str):<br/>            # The function imread loads an image from the specified file and<br/>            # returns it. If the image cannot be read (because of missing<br/>            # file, improper permissions, unsupported or invalid format),<br/>            # the function returns an empty matrix<br/>            # http://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html<br/>            if grayscale:<br/>                img_cv = cv2.imread(img, LOAD_GRAYSCALE)<br/>            else:<br/>                img_cv = cv2.imread(img, LOAD_COLOR)<br/>            if img_cv is None:<br/>&gt;               raise IOError(&quot;Failed to read %s because file is missing, &quot;<br/>                              &quot;has improper permissions, or is an &quot;<br/><span class="error">E                             OSError: Failed to read D:\BotCity\projetos\sidequest\web-test\../resources\mouse.png because file is missing, has improper permissions, or is an unsupported or invalid format</span><br/><br/>venv\lib\site-packages\botcity\web\cv2find.py:69: OSError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">tests/test_browser.py::test_set_current_element</td>
+          <td class="col-duration">5.72</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">web = &lt;botcity.web.bot.WebBot object at 0x0000024856DF8DC0&gt;<br/><br/>    def test_set_current_element(web: WebBot):<br/>        web.browse(conftest.INDEX_PAGE)<br/>        web.wait(1000)<br/>    <br/>        web.add_image(&#x27;mouse&#x27;, os.path.join(conftest.PROJECT_DIR, &#x27;../resources&#x27;, &#x27;mouse.png&#x27;))<br/>        web.add_image(&#x27;git&#x27;, os.path.join(conftest.PROJECT_DIR, &#x27;../resources&#x27;, &#x27;git.png&#x27;))<br/>    <br/>&gt;       mouse_element = web.find(&quot;mouse&quot;, matching=0.97, waiting_time=10_000)<br/><br/>tests\test_browser.py:290: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>venv\lib\site-packages\botcity\web\bot.py:459: in find<br/>    return self.find_until(label=label, x=x, y=y, width=width, height=height, threshold=threshold,<br/>venv\lib\site-packages\botcity\web\bot.py:516: in find_until<br/>    ele = next(it)<br/>venv\lib\site-packages\botcity\web\cv2find.py:104: in locate_all_opencv<br/>    needle_image = _load_cv2(needle_image, grayscale)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>img = &#x27;D:\\BotCity\\projetos\\sidequest\\web-test\\../resources\\mouse.png&#x27;, grayscale = False<br/><br/>    def _load_cv2(img, grayscale=False):<br/>        &quot;&quot;&quot;<br/>        TODO<br/>        &quot;&quot;&quot;<br/>        # load images if given filename, or convert as needed to opencv<br/>        # Alpha layer just causes failures at this point, so flatten to RGB.<br/>        # RGBA: load with -1 * cv2.CV_LOAD_IMAGE_COLOR to preserve alpha<br/>        # to matchTemplate, need template and image to be the same wrt having alpha<br/>    <br/>        if isinstance(img, str):<br/>            # The function imread loads an image from the specified file and<br/>            # returns it. If the image cannot be read (because of missing<br/>            # file, improper permissions, unsupported or invalid format),<br/>            # the function returns an empty matrix<br/>            # http://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html<br/>            if grayscale:<br/>                img_cv = cv2.imread(img, LOAD_GRAYSCALE)<br/>            else:<br/>                img_cv = cv2.imread(img, LOAD_COLOR)<br/>            if img_cv is None:<br/>&gt;               raise IOError(&quot;Failed to read %s because file is missing, &quot;<br/>                              &quot;has improper permissions, or is an &quot;<br/><span class="error">E                             OSError: Failed to read D:\BotCity\projetos\sidequest\web-test\../resources\mouse.png because file is missing, has improper permissions, or is an unsupported or invalid format</span><br/><br/>venv\lib\site-packages\botcity\web\cv2find.py:69: OSError<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_create_tab</td>
+          <td class="col-duration">8.45</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_close_page</td>
+          <td class="col-duration">10.29</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_create_window</td>
+          <td class="col-duration">7.20</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_display_size</td>
+          <td class="col-duration">4.64</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_javascript</td>
+          <td class="col-duration">4.55</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_get_tabs</td>
+          <td class="col-duration">4.88</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_navigate_to</td>
+          <td class="col-duration">6.62</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_start_browser</td>
+          <td class="col-duration">4.49</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_activate_tab</td>
+          <td class="col-duration">4.80</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_get_js_dialog</td>
+          <td class="col-duration">4.91</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_handle_js_dialog</td>
+          <td class="col-duration">4.81</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_get_screen_image</td>
+          <td class="col-duration">4.68</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_find_element</td>
+          <td class="col-duration">4.62</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_find_elements</td>
+          <td class="col-duration">4.65</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_maximize_window</td>
+          <td class="col-duration">5.05</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_page_source</td>
+          <td class="col-duration">4.60</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_enter_iframe</td>
+          <td class="col-duration">4.81</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_leave_iframe</td>
+          <td class="col-duration">4.63</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_get_view_port_size</td>
+          <td class="col-duration">4.66</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_set_screen_resolution</td>
+          <td class="col-duration">4.63</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_wait_for_downloads</td>
+          <td class="col-duration">8.23</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_wait_for_file</td>
+          <td class="col-duration">13.53</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_browser.py::test_print_pdf</td>
+          <td class="col-duration">7.58</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_control_a</td>
+          <td class="col-duration">4.66</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_control_c</td>
+          <td class="col-duration">4.98</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_enter</td>
+          <td class="col-duration">5.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_control_v</td>
+          <td class="col-duration">5.34</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_delete</td>
+          <td class="col-duration">5.01</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_key_end</td>
+          <td class="col-duration">4.98</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_key_esc</td>
+          <td class="col-duration">4.96</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_key_home</td>
+          <td class="col-duration">5.43</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_type_keys</td>
+          <td class="col-duration">5.84</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_type_down</td>
+          <td class="col-duration">5.03</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_type_left</td>
+          <td class="col-duration">4.93</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_type_right</td>
+          <td class="col-duration">4.99</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/test_keyboard.py::test_type_up</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody></table></body></html>

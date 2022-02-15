@@ -124,15 +124,6 @@ jobs:
 
 
 
-      # run tests
-      - name: Test Browser actions
-        run: pytest test_browser.py --browser=${{ matrix.browser }} --headless
-
-      - name: Test Keyboard
-        run: pytest test_keyboard.py --browser=${{ matrix.browser }} --headless
-
-      - name: Test Mouse
-        run: pytest test_mouse.py --browser=${{ matrix.browser }} --headless
-
-      - name: Test Vision
-        run: pytest test_vision.py --browser=${{ matrix.browser }} --headless
+      # tests
+      - name: Run tests
+        run: pytest --headless --browser=${{ matrix.browser }}
