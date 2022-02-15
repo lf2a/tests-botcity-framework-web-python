@@ -43,7 +43,7 @@ def setup_firefox(headless: bool) -> WebBot:
 
 
 def setup_edge(headless: bool) -> WebBot:
-    web = WebBot(headless=headless)
+    web = WebBot(headless)
     web.browser = Browser.EDGE
 
     opt = browsers.edge.default_options(headless=headless, download_folder_path=web.download_folder_path)
