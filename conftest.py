@@ -7,8 +7,8 @@ import typing
 from botcity.web import WebBot, Browser, By, browsers
 
 PROJECT_DIR = os.path.abspath('')
-INDEX_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'index.html')
-TEST_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'test.html')
+INDEX_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'index.html').replace('\\', '/')
+TEST_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'test.html').replace('\\', '/')
 OS_NAME = platform.system()
 
 

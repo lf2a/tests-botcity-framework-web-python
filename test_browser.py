@@ -1,7 +1,4 @@
 import os
-import sys
-
-import pytest
 
 import conftest
 
@@ -10,16 +7,16 @@ from botcity.web import WebBot, Browser, By
 
 
 def test_create_tab(web: WebBot):
-    web.browse('https://github.com/botcity-dev/botcity-framework-web-python')
+    web.browse(conftest.INDEX_PAGE)
     web.wait(2_000)
 
     title = web.page_title()
-    assert 'botcity-framework-web-python: BotCity Framework Web' in title
+    assert title == 'Botcity - web test'
 
 
 def test_close_page(web: WebBot):
     web.browse(conftest.INDEX_PAGE)
-    web.create_tab('test.html')
+    web.create_window(url=conftest.TEST_PAGE)
     web.wait(5_000)
     web.close_page()
 
@@ -29,7 +26,7 @@ def test_close_page(web: WebBot):
 
 def test_create_window(web: WebBot):
     web.browse(conftest.INDEX_PAGE)
-    web.create_window(url='test.html')
+    web.create_window(url=conftest.TEST_PAGE)
     web.wait(2_000)
 
     title = web.page_title()
@@ -56,7 +53,7 @@ def test_javascript(web: WebBot):
 
 def test_get_tabs(web: WebBot):
     web.browse(conftest.INDEX_PAGE)
-    web.create_tab('test.html')
+    web.create_tab(conftest.TEST_PAGE)
     tabs = web.get_tabs()
 
     assert len(tabs) == 2
@@ -80,7 +77,7 @@ def test_start_browser(web: WebBot):
 
 def test_activate_tab(web: WebBot):
     web.browse(conftest.INDEX_PAGE)
-    web.create_tab('https://www.google.com')
+    web.create_tab(conftest.TEST_PAGE)
     tabs = web.get_tabs()
     web.activate_tab(tabs[0])
 
