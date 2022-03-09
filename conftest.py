@@ -1,15 +1,16 @@
 import os
 import json
 import pytest
-import platform
 import typing
+import platform
 
 from botcity.web import WebBot, Browser, By, browsers
 
-PROJECT_DIR = os.path.abspath('')
-INDEX_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'index.html').replace('\\', '/')
-TEST_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'test.html').replace('\\', '/')
 OS_NAME = platform.system()
+
+PROJECT_DIR = os.path.abspath('')
+TEST_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'test.html').replace('\\', '/')
+INDEX_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'index.html').replace('\\', '/')
 
 
 def setup_chrome(headless: bool) -> WebBot:
