@@ -1,5 +1,5 @@
 import os
-
+import pytest
 import conftest
 
 from PIL import Image
@@ -224,6 +224,7 @@ def test_scroll_up(web: WebBot):
     assert mouse_icon is not None
 
 
+@pytest.mark.xfail
 def test_set_screen_resolution(web: WebBot):
     web.browse(conftest.INDEX_PAGE)
     web.set_screen_resolution(500, 500)
