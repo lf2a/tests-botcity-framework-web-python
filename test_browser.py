@@ -257,6 +257,8 @@ def test_wait_for_downloads(web: WebBot):
     # if *.part exists download is not complete.
     file_part = os.path.join(conftest.PROJECT_DIR, file_name + '.part')
 
+    web.wait(1000)
+
     assert os.path.isfile(file) and not os.path.exists(file_part)
     os.remove(file)
 
