@@ -9,7 +9,7 @@
 `--html=<path>/html-file`: generate html report file.
 
 ```shell
-pytest --headless --browser=chrome --html=html/chrome-headless-report.html
+pytest -s --headless --browser=chrome --html=html/chrome-headless-report.html
 ```
 
 | Method                          |       Tested       | Comments |

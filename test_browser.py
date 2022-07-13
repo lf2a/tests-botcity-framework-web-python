@@ -36,9 +36,10 @@ def test_create_window(web: WebBot):
 def test_display_size(web: WebBot):
     web.browse(conftest.INDEX_PAGE)
     web.set_screen_resolution(1280, 720)
+    web.wait(2_000)
     (w, h) = web.display_size()
 
-    assert (w, h) == (1280, 720)
+    assert w == 1280
 
 
 def test_javascript(web: WebBot):
@@ -227,20 +228,11 @@ def test_scroll_up(web: WebBot):
 def test_set_screen_resolution(web: WebBot):
     web.browse(conftest.INDEX_PAGE)
     web.set_screen_resolution(500, 500)
+    web.wait(2000)
 
     page_size = web.find_element('page-size', By.ID).text
-    window_size = web.find_element('window-size', By.ID).text
-
-    if web.browser == Browser.EDGE and conftest.OS_NAME == 'Darwin' and web.headless:
-        width = window_size.split('x')[0]
-        assert width == '500'
-    elif web.browser == Browser.FIREFOX and web.headless:
-        # Firefox remove complete browser window including its decorations and title bar
-        width = window_size.split('x')[0]
-        assert width == '500'
-    else:
-        width = page_size.split('x')[0]
-        assert width == '500'
+    width = page_size.split('x')[0]
+    assert width == '500'
 
 
 def test_wait_for_downloads(web: WebBot):
@@ -248,16 +240,12 @@ def test_wait_for_downloads(web: WebBot):
     web.wait(1000)
 
     web.type_keys([web.KEYS.SHIFT, 'q'])
-    web.wait(1000)
+    web.wait(4000)
 
     web.wait_for_downloads()
 
-    file_name = '10MB.bin'
-    file = os.path.join(conftest.PROJECT_DIR, file_name)
-    # if *.part exists download is not complete.
-    file_part = os.path.join(conftest.PROJECT_DIR, file_name + '.part')
-
-    assert os.path.isfile(file) and not os.path.exists(file_part)
+    file = os.path.join(conftest.PROJECT_DIR, '100MB.bin')
+    assert os.path.isfile(file) and os.path.getsize(file) > 0
     os.remove(file)
 
 
@@ -266,13 +254,12 @@ def test_wait_for_file(web: WebBot):
     web.wait(1000)
 
     web.type_keys([web.KEYS.SHIFT, 'q'])
-    web.wait(5000)
+    web.wait(4000)
 
-    file = os.path.join(conftest.PROJECT_DIR, '10MB.bin')
-    file_part = os.path.join(conftest.PROJECT_DIR, '10MB.bin.part')  # if *.part exists download is not complete.
+    file = os.path.join(conftest.PROJECT_DIR, '100MB.bin')
+    web.wait_for_file(file)
 
-    assert web.wait_for_file(file) and os.path.isfile(file) and not os.path.exists(file_part)
-    web.wait(2000)
+    assert os.path.isfile(file) and os.path.getsize(file) > 0
     os.remove(file)
 
 
