@@ -16,7 +16,8 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         python-version: [ 3.8, 3.10.2 ]
-        browser: [ chrome, firefox, edge ]
+        browser: [ firefox ]
+#        browser: [ chrome, firefox, edge ]
 
     steps:
       - uses: actions/checkout@v2
