@@ -65,9 +65,6 @@ def setup_edge(headless: bool) -> WebBot:
 
 @pytest.fixture
 def web(request):
-    file = os.path.join(PROJECT_DIR, '100MB.bin')
-    if os.path.exists(file):
-        os.remove(file)
 
     browser = request.config.getoption("--browser") or Browser.CHROME
     is_headless = request.config.getoption("--headless")
