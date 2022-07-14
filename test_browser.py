@@ -250,24 +250,23 @@ def test_wait_for_downloads(web: WebBot):
     web.wait_for_downloads()
 
     assert os.path.isfile(file) and os.path.getsize(file) > 0
-    os.remove(file)
 
 
-def test_wait_for_file(web: WebBot):
-    file = os.path.join(conftest.PROJECT_DIR, '100MB.bin')
-    if os.path.exists(file):
-        os.remove(file)
-
-    web.browse(conftest.INDEX_PAGE)
-    web.wait(1000)
-
-    web.type_keys([web.KEYS.SHIFT, 'q'])
-    web.wait(4000)
-
-    web.wait_for_file(file)
-
-    assert os.path.isfile(file) and os.path.getsize(file) > 0
-    os.remove(file)
+# def test_wait_for_file(web: WebBot):
+#     file = os.path.join(conftest.PROJECT_DIR, '100MB.bin')
+#     if os.path.exists(file):
+#         os.remove(file)
+#
+#     web.browse(conftest.INDEX_PAGE)
+#     web.wait(1000)
+#
+#     web.type_keys([web.KEYS.SHIFT, 'q'])
+#     web.wait(4000)
+#
+#     web.wait_for_file(file)
+#
+#     assert os.path.isfile(file) and os.path.getsize(file) > 0
+#     os.remove(file)
 
 
 def test_set_current_element(web: WebBot):
