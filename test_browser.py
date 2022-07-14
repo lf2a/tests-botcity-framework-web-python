@@ -171,7 +171,7 @@ def test_set_file_input_element(web: WebBot):
     web.browse(conftest.INDEX_PAGE)
     input_file_element = web.find_element('file', By.ID)
 
-    pdf_file = os.path.join(conftest.PROJECT_DIR, 'web', 'sample.pdf')
+    pdf_file = os.path.join(conftest.PROJECT_DIR, 'sample.pdf')
     web.set_file_input_element(input_file_element, pdf_file)
     web.wait(5_000)
 
