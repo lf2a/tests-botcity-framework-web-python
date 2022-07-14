@@ -6,10 +6,6 @@ import platform
 
 from botcity.web import WebBot, Browser, By, browsers
 
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.firefox import GeckoDriverManager
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
-
 OS_NAME = platform.system()
 
 PROJECT_DIR = os.path.abspath('')
@@ -20,14 +16,30 @@ INDEX_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'index.html').replace(
 def setup_chrome(headless: bool) -> WebBot:
     web = WebBot(headless)
     web.browser = Browser.CHROME
-    web.driver_path = ChromeDriverManager().install()
+
+    if OS_NAME == 'Windows':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'windows', 'chromedriver.exe')
+    elif OS_NAME == 'Linux':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'linux', 'chromedriver')
+    elif OS_NAME == 'Darwin':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'chromedriver')
+    else:
+        raise ValueError(f'OS [{OS_NAME}] not supported.')
     return web
 
 
 def setup_firefox(headless: bool) -> WebBot:
     web = WebBot(headless)
     web.browser = Browser.FIREFOX
-    web.driver_path = GeckoDriverManager().install()
+
+    if OS_NAME == 'Windows':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'windows', 'geckodriver.exe')
+    elif OS_NAME == 'Linux':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'linux', 'geckodriver')
+    elif OS_NAME == 'Darwin':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'geckodriver')
+    else:
+        raise ValueError(f'OS [{OS_NAME}] not supported.')
     return web
 
 
@@ -37,8 +49,17 @@ def setup_edge(headless: bool) -> WebBot:
 
     opt = browsers.edge.default_options(headless=headless, download_folder_path=web.download_folder_path)
     opt.set_capability('platform', 'ANY')  # WINDOWS is default value:
+
+    if OS_NAME == 'Windows':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'windows', 'msedgedriver.exe')
+    elif OS_NAME == 'Linux':
+        opt.add_argument('--remote-debugging-port=9222')
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'linux', 'msedgedriver')
+    elif OS_NAME == 'Darwin':
+        web.driver_path = os.path.join(PROJECT_DIR, 'web-drivers', 'macos', 'msedgedriver')
+    else:
+        raise ValueError(f'OS [{OS_NAME}] not supported.')
     web.options = opt
-    web.driver_path = EdgeChromiumDriverManager().install()
     return web
 
 
