@@ -253,7 +253,7 @@ def test_wait_for_downloads(web: WebBot):
     assert os.path.exists(file) and os.path.getsize(file) > 0
 
 
-@pytest.mark.skip(reason='Falhando')
+# @pytest.mark.skip(reason='skipped because of bug')
 def test_wait_for_file(web: WebBot):
     file = os.path.join(conftest.PROJECT_DIR, '100MB.bin')
     if os.path.exists(file):
