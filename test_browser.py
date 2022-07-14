@@ -248,6 +248,7 @@ def test_wait_for_downloads(web: WebBot):
     web.wait(4000)
 
     web.wait_for_downloads()
+    web.wait(2000)
 
     assert os.path.isfile(file) and os.path.getsize(file) > 0
 
