@@ -250,7 +250,7 @@ def test_wait_for_downloads(web: WebBot):
     web.wait_for_downloads()
     web.wait(2000)
 
-    assert os.path.isfile(file) and os.path.getsize(file) > 0
+    assert os.path.exists(file) and os.path.getsize(file) > 0
 
 
 # def test_wait_for_file(web: WebBot):
