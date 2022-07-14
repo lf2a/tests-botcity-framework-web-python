@@ -41,8 +41,8 @@
 
         // SHIFT+Q -> Download file
         if (keysPressed[keysPressed.length - 1] === 'Shift' && event.key === 'Q') {
-            // window.location.href = 'fake.bin'; // local file
-            window.location.href = 'https://speed.hetzner.de/100MB.bin';
+            window.location.href = 'fake.bin'; // local file
+            // window.location.href = 'https://speed.hetzner.de/100MB.bin';
         }
 
 

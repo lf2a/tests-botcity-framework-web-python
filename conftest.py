@@ -9,8 +9,9 @@ from botcity.web import WebBot, Browser, By, browsers
 OS_NAME = platform.system()
 
 PROJECT_DIR = os.path.abspath('')
-TEST_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'test.html').replace('\\', '/')
-INDEX_PAGE = 'file://' + os.path.join(PROJECT_DIR, 'web', 'index.html').replace('\\', '/')
+FAKE_BIN_PATH = os.path.join(PROJECT_DIR, 'fake.bin')
+TEST_PAGE = "https://lf2a.github.io/webpage-test/test.html"
+INDEX_PAGE = "https://lf2a.github.io/webpage-test/"
 
 
 def setup_chrome(headless: bool) -> WebBot:
